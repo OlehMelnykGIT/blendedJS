@@ -1,0 +1,335 @@
+/* =====================================================================
+   demo.css — елементи всередині «Живе демо»:
+   поля, «консоль», покрокові обчислення, підсвічування switch,
+   плитки з числами, смуги, циферблат, діалог confirm.
+   Нові віджети для наступних уроків додавай сюди.
+   ===================================================================== */
+
+/* ---------- Поля вводу ---------- */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: end;
+}
+
+.field {
+  flex: 1 1 140px;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.field.wide {
+  flex-basis: 100%;
+}
+
+.field label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---------- «Консоль» ---------- */
+
+.console {
+  margin: 0;
+  padding: 16px;
+  max-height: 320px;
+  overflow: auto;
+  background: var(--pre-bg);
+  color: var(--pre-text);
+  border-radius: 6px;
+  font: 13px/1.5 var(--mono);
+  display: grid;
+  gap: 2px;
+}
+
+.console .ln {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.console .ln::before {
+  content: "› ";
+  color: var(--pre-muted);
+}
+
+.console .ln.alert::before {
+  content: "alert › ";
+  color: var(--code-str);
+}
+
+.console .ln.ret::before {
+  content: "return › ";
+  color: var(--code-fn);
+}
+
+.console .ln.err {
+  color: #ff8a80;
+}
+
+.console .ln.err::before {
+  content: "❌ ";
+}
+
+/* ---------- Покрокові обчислення ---------- */
+
+.viz {
+  display: grid;
+  gap: 10px;
+}
+
+.steps {
+  display: grid;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.steps div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.steps .arrow {
+  color: var(--muted);
+}
+
+.pill {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.pill.ok {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.pill.bad {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.pill.neutral {
+  background: var(--accent-bg);
+  color: var(--accent-text);
+}
+
+/* ---------- switch: яка гілка спрацювала ---------- */
+
+.cases {
+  display: grid;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: 13px;
+}
+
+.cases div {
+  padding: 4px 10px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cases div.hit {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+/* ---------- if / else: шлях виконання ---------- */
+
+.flow {
+  display: grid;
+  gap: 6px;
+}
+
+.flow div {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.flow div.on {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.flow div.sub {
+  margin-left: 24px;
+}
+
+/* ---------- Плитки з числами (цикли) ---------- */
+
+.nums {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.num {
+  min-width: 38px;
+  padding: 5px 6px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.num.even,
+.num.buzz {
+  background: var(--ok-bg);
+  border-color: var(--ok);
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.num.fizz {
+  background: var(--accent-bg);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.num.fizzbuzz {
+  background: var(--marker);
+  border-color: var(--marker);
+  color: var(--marker-ink);
+  font-weight: 700;
+}
+
+.num.dim {
+  opacity: 0.25;
+}
+
+.num.now {
+  outline: 2px solid var(--accent);
+}
+
+/* ---------- Смуги порівняння ---------- */
+
+.bar-row {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr) 90px;
+  gap: 10px;
+  align-items: center;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bar-row b {
+  text-align: right;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+
+.bar {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.bar > i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ok);
+  transition: width 0.25s;
+}
+
+.bar.over > i {
+  background: var(--error-text);
+}
+
+.bar.base > i {
+  background: var(--accent);
+}
+
+/* ---------- Рядки: що лишилось / що знайдено ---------- */
+
+.msg {
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.8;
+  word-break: break-word;
+}
+
+.msg .kept {
+  background: var(--ok-bg);
+  color: var(--ok);
+  border-radius: 3px;
+}
+
+.msg .cut {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.msg mark {
+  padding: 0 2px;
+  background: var(--marker);
+  color: var(--marker-ink);
+  border-radius: 3px;
+}
+
+/* ---------- Циферблат ---------- */
+
+.clock-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+}
+
+.clock-wrap svg {
+  flex: none;
+  width: 170px;
+  height: 170px;
+  max-width: 100%;
+}
+
+.clock-wrap .controls {
+  flex: 1 1 220px;
+}
+
+/* ---------- Діалог замість confirm ---------- */
+
+.dialog {
+  padding: 12px;
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--card);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.dialog p {
+  flex: 1 1 160px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.msg .steps {
+  margin-top: 6px;
+}

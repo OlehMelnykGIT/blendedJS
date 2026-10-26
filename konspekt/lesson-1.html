@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Blended JS · Заняття 1</title>
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/container.css" />
+    <link rel="stylesheet" href="css/demo.css" />
+    <script type="module" src="js/lesson-1.js"></script>
+  </head>
+  <body>
+  <main>
+    <header class="intro">
+      <div class="eyebrow"><a href="index.html">← Усі уроки</a> · blendedJS · js/task-1…4.js · js/lesson-1.js</div>
+      <h1>JavaScript: заняття 1. Конспект із прикладами</h1>
+      <p class="lede">Конспект першого заняття. Кожна задача має умову, робоче рішення, коротке пояснення і пісочницю: змінюй значення і дивись, що повертає функція. Замість <code>prompt</code>, <code>alert</code> і <code>confirm</code> тут поля вводу та кнопки, але логіка та сама, що в коді.</p>
+      <div class="legend">
+        <span class="pill neutral">› console.log</span>
+        <span class="pill neutral">alert › повідомлення</span>
+        <span class="pill neutral">return › значення функції</span>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Зміст">
+      <h2>Домашня робота</h2>
+      <ol>
+        <li><a href="#h1"><span>Д1</span>makeTransaction</a></li>
+        <li><a href="#h2"><span>Д2</span>formatMessage</a></li>
+        <li><a href="#h3"><span>Д3</span>checkForSpam</a></li>
+        <li><a href="#h4"><span>Д4</span>getShippingCost</a></li>
+      </ol>
+      <h2>Заняття 1 · lesson-1.js</h2>
+      <ol>
+        <li><a href="#l1"><span>01</span>Число 10</a></li>
+        <li><a href="#l2"><span>02</span>Чверть години</a></li>
+        <li><a href="#l3"><span>03</span>Пори року</a></li>
+        <li><a href="#l4"><span>04</span>Хвилини → гг:хх</a></li>
+        <li><a href="#l5"><span>05</span>Логін і пароль</a></li>
+        <li><a href="#l6"><span>06</span>Цикл while</a></li>
+        <li><a href="#l7"><span>07</span>getNumbers</a></li>
+        <li><a href="#l8"><span>08</span>min(a, b)</a></li>
+        <li><a href="#l9"><span>09</span>isAdult</a></li>
+        <li><a href="#l10"><span>10</span>fizzBuzz</a></li>
+      </ol>
+    </nav>
+
+    <h2 class="part-title">Домашня робота · task-1…4</h2>
+
+    <!-- H1 -->
+    <article class="task" id="h1">
+      <div class="task-head"><span class="task-no">Д1</span><h3>Купівля дроїдів</h3>
+        <div class="chips"><span class="chip">if</span><span class="chip">return</span><span class="chip">template string</span><span class="chip file">js/task-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Функція <code>makeTransaction(quantity, pricePerDroid, customerCredits)</code> рахує загальну вартість. Якщо кредитів не вистачає, повертає <code>"Insufficient funds!"</code>, інакше повідомлення про покупку.</p></div>
+      <pre class="code">function makeTransaction(quantity, pricePerDroid, customerCredits) {
+  const totalPrice = quantity * pricePerDroid;
+
+  if (totalPrice > customerCredits) {
+    return "Insufficient funds!";
+  }
+
+  return `You ordered ${quantity} droids worth ${totalPrice} credits!`;
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Спочатку обчислюємо <code>totalPrice</code> і зберігаємо в <code>const</code>, бо значення далі не змінюється.</li>
+        <li><b>Ранній return</b>: якщо грошей мало, функція одразу виходить. Тому <code>else</code> не потрібен.</li>
+        <li>Шаблонний рядок у зворотних лапках <code>`...${}`</code> підставляє значення змінних.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field"><label for="h1q">quantity</label><input id="h1q" type="number" value="5"></div>
+          <div class="field"><label for="h1p">pricePerDroid</label><input id="h1p" type="number" value="3000"></div>
+          <div class="field"><label for="h1c">customerCredits</label><input id="h1c" type="number" value="23000"></div>
+        </div>
+        <div class="viz" id="h1viz"></div>
+        <div class="console" id="h1out"></div>
+      </div>
+    </article>
+
+    <!-- H2 -->
+    <article class="task" id="h2">
+      <div class="task-head"><span class="task-no">Д2</span><h3>Обрізання повідомлення</h3>
+        <div class="chips"><span class="chip">length</span><span class="chip">slice</span><span class="chip file">js/task-2.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond"><code>formatMessage(message, maxLength)</code> повертає рядок як є, якщо він не довший за <code>maxLength</code>. Інакше обрізає до <code>maxLength</code> символів і додає <code>"..."</code>.</p></div>
+      <pre class="code">function formatMessage(message, maxLength) {
+  if (message.length &lt;= maxLength) {
+    return message;
+  }
+
+  return message.slice(0, maxLength) + "...";
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>message.length</code> дає кількість символів, пробіли теж рахуються.</li>
+        <li><code>slice(0, maxLength)</code> бере символи з індексу 0 до <code>maxLength</code>, не включаючи його. Вихідний рядок не змінюється.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field wide"><label for="h2m">message</label><input id="h2m" type="text" value="Curabitur ligula sapien"></div>
+          <div class="field"><label for="h2l">maxLength: <b id="h2lv">16</b></label><input id="h2l" type="range" min="0" max="45" value="16"></div>
+        </div>
+        <div class="msg" id="h2viz"></div>
+        <div class="console" id="h2out"></div>
+      </div>
+    </article>
+
+    <!-- H3 -->
+    <article class="task" id="h3">
+      <div class="task-head"><span class="task-no">Д3</span><h3>Перевірка на спам</h3>
+        <div class="chips"><span class="chip">toLowerCase</span><span class="chip">includes</span><span class="chip">||</span><span class="chip file">js/task-3.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond"><code>checkForSpam(message)</code> повертає <code>true</code>, якщо в рядку є слово <code>spam</code> або <code>sale</code> у будь-якому регістрі.</p></div>
+      <pre class="code">function checkForSpam(message) {
+  const normalizedMessage = message.toLowerCase();
+
+  return normalizedMessage.includes("spam") || normalizedMessage.includes("sale");
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><b>Нормалізація</b>: переводимо все в нижній регістр, тоді <code>SalE</code> і <code>sale</code> однакові.</li>
+        <li><code>includes()</code> повертає <code>true</code> або <code>false</code>, тому результат <code>||</code> можна одразу повертати, без <code>if</code>.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field wide"><label for="h3m">message</label><input id="h3m" type="text" value="Amazing SalE, only tonight!"></div>
+        </div>
+        <div class="controls" id="h3presets"></div>
+        <div class="msg" id="h3viz"></div>
+        <div class="console" id="h3out"></div>
+      </div>
+    </article>
+
+    <!-- H4 -->
+    <article class="task" id="h4">
+      <div class="task-head"><span class="task-no">Д4</span><h3>Вартість доставки</h3>
+        <div class="chips"><span class="chip">switch</span><span class="chip">default</span><span class="chip file">js/task-4.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond"><code>getShippingCost(country)</code> повертає вартість доставки в China, Chile, Australia, Jamaica. Для інших країн: <code>"Sorry, there is no delivery to your country"</code>.</p></div>
+      <pre class="code">function getShippingCost(country) {
+  let price;
+
+  switch (country) {
+    case "China":
+      price = 100;
+      break;
+    case "Chile":
+      price = 250;
+      break;
+    case "Australia":
+      price = 170;
+      break;
+    case "Jamaica":
+      price = 120;
+      break;
+    default:
+      return "Sorry, there is no delivery to your country";
+  }
+
+  return `Shipping to ${country} will cost ${price} credits`;
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>switch</code> порівнює значення строго, як <code>===</code>. Тому <code>"china"</code> з маленької літери не знайдеться.</li>
+        <li><code>break</code> виходить зі <code>switch</code>. Без нього код «провалиться» в наступний <code>case</code>.</li>
+        <li>У <code>default</code> стоїть <code>return</code>, тож функція завершується одразу і до шаблонного рядка не доходить.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field"><label for="h4c">country</label><input id="h4c" type="text" value="Australia" list="h4list"></div>
+          <datalist id="h4list"><option value="China"></option><option value="Chile"></option><option value="Australia"></option><option value="Jamaica"></option><option value="Germany"></option><option value="Sweden"></option></datalist>
+        </div>
+        <div class="cases" id="h4viz"></div>
+        <div class="console" id="h4out"></div>
+      </div>
+    </article>
+
+    <h2 class="part-title">Заняття 1 · js/lesson-1.js</h2>
+
+    <!-- L1 -->
+    <article class="task" id="l1">
+      <div class="task-head"><span class="task-no">1</span><h3>Чи дорівнює число 10</h3>
+        <div class="chips"><span class="chip">prompt</span><span class="chip">Number()</span><span class="chip">тернарний оператор</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Запитати число через <code>prompt()</code>. Якщо воно дорівнює 10, вивести <code>'Вірно'</code>, інакше <code>'Невірно'</code>.</p></div>
+      <pre class="code">const number = Number(prompt("Введи число"));
+
+// варіант з if...else
+if (number === 10) {
+  alert("Вірно");
+} else {
+  alert("Невірно");
+}
+
+// той самий результат одним рядком
+alert(number === 10 ? "Вірно" : "Невірно");</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>prompt</code> <b>завжди повертає рядок</b> (або <code>null</code> після Cancel). <code>"10" === 10</code> дає <code>false</code>, тому потрібен <code>Number()</code>.</li>
+        <li><code>Number("abc")</code> дає <code>NaN</code>, а <code>Number("")</code> дає <code>0</code>.</li>
+        <li>Тернарний оператор <code>умова ? так : ні</code> повертає значення, тому його можна передати прямо в <code>alert</code>.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls"><div class="field"><label for="l1n">Що ввели в prompt</label><input id="l1n" type="text" value="10"></div></div>
+        <div class="steps" id="l1viz"></div>
+        <div class="console" id="l1out"></div>
+      </div>
+    </article>
+
+    <!-- L2 -->
+    <article class="task" id="l2">
+      <div class="task-head"><span class="task-no">2</span><h3>У яку чверть години потрапляє хвилина</h3>
+        <div class="chips"><span class="chip">Math.random</span><span class="chip">else if</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">У змінній <code>min</code> випадкове число від 0 до 59. Визначити чверть години і вивести, наприклад, <code>"10 входить в першу чверть"</code>.</p></div>
+      <pre class="code">const min = Math.floor(Math.random() * 60); // 0…59
+
+if (min &lt; 15) {
+  alert(`${min} входить в першу чверть`);
+} else if (min &lt; 30) {
+  alert(`${min} входить в другу чверть`);
+} else if (min &lt; 45) {
+  alert(`${min} входить в третю чверть`);
+} else {
+  alert(`${min} входить в четверту чверть`);
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Умови перевіряються згори вниз, спрацьовує перша істинна. Тому в другій гілці достатньо <code>min &lt; 30</code>: що <code>min &gt;= 15</code>, вже відомо.</li>
+        <li><code>Math.random()</code> дає число від 0 до 1 (1 не включно). Множимо на 60 і округлюємо вниз <code>Math.floor</code>, отримуємо 0…59.</li>
+      </ul></div>
+      <div class="note"><strong>Зауваження до коду в lesson-1.js</strong><ul>
+        <li><code>"${min} входить…"</code> у звичайних лапках не підставляє змінну, на екрані буде буквально <code>${min}</code>. Потрібні зворотні лапки <code>`</code>.</li>
+        <li>В останній гілці <code>else "…";</code> немає <code>alert</code>, тому нічого не виводиться.</li>
+        <li><code>Math.random() * 59</code> ніколи не дає 59. Для 0…59 множимо на 60.</li>
+      </ul></div>
+      <div class="play">
+        <div class="clock-wrap">
+          <svg viewBox="0 0 200 200" id="l2clock" role="img" aria-label="Циферблат з чвертями години"></svg>
+          <div class="controls">
+            <div class="field wide"><label for="l2m">min: <b id="l2mv">10</b></label><input id="l2m" type="range" min="0" max="59" value="10"></div>
+            <button id="l2rnd" type="button">Math.random()</button>
+          </div>
+        </div>
+        <div class="console" id="l2out"></div>
+      </div>
+    </article>
+
+    <!-- L3 -->
+    <article class="task" id="l3">
+      <div class="task-head"><span class="task-no">3</span><h3>Пора року через switch</h3>
+        <div class="chips"><span class="chip">switch</span><span class="chip">default</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Користувач вводить <code>'1'</code>…<code>'4'</code>. У <code>result</code> записати зиму, весну, літо або осінь. Інакше: <code>"Вибачте, але ви маєте ввести значення від 1 до 4 включно"</code>.</p></div>
+      <pre class="code">const num = prompt("Введіть число від 1 до 4");
+let result = "";
+
+switch (num) {
+  case "1":
+    result = "зима";
+    break;
+  case "2":
+    result = "весна";
+    break;
+  case "3":
+    result = "літо";
+    break;
+  case "4":
+    result = "осінь";
+    break;
+  default:
+    result = "Вибачте, але ви маєте ввести значення від 1 до 4 включно";
+}
+console.log(result);</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>prompt</code> повертає рядок, тому в <code>case</code> пишемо рядки <code>"1"</code>, а не числа <code>1</code>. Інакше строге порівняння не спрацює.</li>
+        <li><code>default</code> ловить усе інше: <code>"5"</code>, <code>"abc"</code>, <code>" 1"</code> з пробілом і <code>null</code> після Cancel.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls"><div class="field"><label for="l3n">Що ввели в prompt</label><input id="l3n" type="text" value="3"></div></div>
+        <div class="cases" id="l3viz"></div>
+        <div class="console" id="l3out"></div>
+      </div>
+    </article>
+
+    <!-- L4 -->
+    <article class="task" id="l4">
+      <div class="task-head"><span class="task-no">4</span><h3>Хвилини у формат гг:хх</h3>
+        <div class="chips"><span class="chip">/ і %</span><span class="chip">Math.floor</span><span class="chip">padStart</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Користувач вводить кількість хвилин, у консоль виводимо години й хвилини: <code>'70'</code> → <code>'01:10'</code>.</p></div>
+      <pre class="code">const value = Number(prompt("Кількість хвилин"));
+
+const hours = String(Math.floor(value / 60)).padStart(2, "0");
+const minutes = String(value % 60).padStart(2, "0");
+
+console.log(`${hours}:${minutes}`);</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>value / 60</code> дає дробові години, <code>Math.floor</code> відкидає дробову частину.</li>
+        <li><code>%</code> — остача від ділення, тобто хвилини, що лишились після повних годин.</li>
+        <li><code>padStart(2, "0")</code> доповнює рядок нулями зліва до довжини 2. Це метод рядка, тому спочатку <code>String()</code>.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls"><div class="field"><label for="l4n">Хвилини</label><input id="l4n" type="number" value="70" min="0"></div></div>
+        <div class="steps" id="l4viz"></div>
+        <div class="console" id="l4out"></div>
+      </div>
+    </article>
+
+    <!-- L5 -->
+    <article class="task" id="l5">
+      <div class="task-head"><span class="task-no">5</span><h3>Логін і пароль</h3>
+        <div class="chips"><span class="chip">вкладений if</span><span class="chip">null</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Запитати логін. Для <code>"Адмін"</code> запитати пароль: <code>"Я головний"</code> → <code>"Добрий день!"</code>, інакше <code>"Невірний пароль!"</code>. Порожній логін або Cancel → <code>"Скасовано"</code>. Будь-який інший логін → <code>"Я вас не знаю"</code>.</p></div>
+      <pre class="code">const login = prompt("Введіть логін:");
+console.log(login);
+
+if (login === "Адмін") {
+  const password = prompt("Введіть пароль:");
+
+  if (password === "Я головний") {
+    alert("Добрий день!");
+  } else {
+    alert("Невірний пароль!");
+  }
+} else if (login === null || login === "") {
+  alert("Скасовано");
+} else {
+  alert("Я вас не знаю");
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Cancel у <code>prompt</code> повертає <code>null</code>, а OK з порожнім полем повертає <code>""</code>. Перевіряємо обидва випадки.</li>
+        <li>Пароль запитуємо <b>тільки всередині</b> гілки адміна, щоб інших користувачів про нього не питати.</li>
+      </ul></div>
+      <div class="note"><strong>Зауваження до коду в lesson-1.js</strong><ul>
+        <li>У твоєму рішенні логін <code>"Admin"</code> і пароль <code>"Password"</code>, а за умовою <code>"Адмін"</code> і <code>"Я головний"</code>. Логіка правильна, відрізняються лише рядки.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field"><label for="l5l">Логін</label><input id="l5l" type="text" value="Адмін"></div>
+          <div class="field"><label for="l5p">Пароль</label><input id="l5p" type="text" value="Я головний"></div>
+          <button id="l5cancel" type="button" class="ghost" aria-pressed="false">Cancel у логіні</button>
+        </div>
+        <div class="flow" id="l5viz"></div>
+        <div class="console" id="l5out"></div>
+      </div>
+    </article>
+
+    <!-- L6 -->
+    <article class="task" id="l6">
+      <div class="task-head"><span class="task-no">6</span><h3>Числа від 0 до 20 циклом while</h3>
+        <div class="chips"><span class="chip">while</span><span class="chip">лічильник</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">За допомогою <code>while</code> вивести в консоль усі числа від 0 до 20 включно.</p></div>
+      <pre class="code">let i = 0;
+
+while (i &lt;= 20) {
+  console.log(i);
+  i += 1;
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Три частини циклу: <b>початок</b> <code>let i = 0</code>, <b>умова</b> <code>i &lt;= 20</code>, <b>крок</b> <code>i += 1</code>.</li>
+        <li><code>&lt;=</code>, а не <code>&lt;</code>, бо 20 теж має вивестись.</li>
+        <li>Без <code>i += 1</code> умова завжди істинна, і цикл стає нескінченним.</li>
+      </ul></div>
+      <div class="note"><strong>Зауваження</strong><ul><li>У lesson-1.js цю задачу ще не розв'язано. Вище готове рішення.</li></ul></div>
+      <div class="play">
+        <div class="controls"><button id="l6run" type="button">Запустити покроково</button></div>
+        <div class="nums" id="l6viz"></div>
+        <div class="steps" id="l6state"></div>
+      </div>
+    </article>
+
+    <!-- L7 -->
+    <article class="task" id="l7">
+      <div class="task-head"><span class="task-no">7</span><h3>getNumbers: від max до min і сума парних</h3>
+        <div class="chips"><span class="chip">for</span><span class="chip">%</span><span class="chip">typeof</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Функція <code>getNumbers(min, max)</code> виводить у консоль числа від <code>max</code> до <code>min</code> за спаданням і повертає суму парних.</p></div>
+      <pre class="code">function getNumbers(min, max) {
+  if (typeof min !== "number" || typeof max !== "number") {
+    return "Not a Number!";
+  }
+
+  let sum = 0;
+
+  for (let i = max; i >= min; i--) {
+    console.log(i);
+    if (i % 2 === 0) {
+      sum += i;
+    }
+  }
+
+  return sum;
+}
+
+console.log(getNumbers(1, 10));   // 30
+console.log(getNumbers("1", 10)); // "Not a Number!"</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Цикл іде <b>назад</b>: стартує з <code>max</code>, умова <code>i &gt;= min</code>, крок <code>i--</code>.</li>
+        <li><code>i % 2 === 0</code> означає, що число ділиться на 2 без остачі, тобто парне.</li>
+        <li><code>typeof "1"</code> дає <code>"string"</code>, тому рядок не пройде перевірку.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field"><label for="l7a">min</label><input id="l7a" type="text" value="1"></div>
+          <div class="field"><label for="l7b">max</label><input id="l7b" type="text" value="10"></div>
+        </div>
+        <p class="label">Число без лапок передається як number, у лапках (<code>"1"</code>) як string</p>
+        <div class="nums" id="l7viz"></div>
+        <div class="console" id="l7out"></div>
+      </div>
+    </article>
+
+    <!-- L8 -->
+    <article class="task" id="l8">
+      <div class="task-head"><span class="task-no">8</span><h3>min(a, b): менше з двох чисел</h3>
+        <div class="chips"><span class="chip">typeof</span><span class="chip">тернарний оператор</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond"><code>min(a, b)</code> повертає менше з двох чисел. Якщо хоч один аргумент не число, повертає <code>'Not a number!'</code>.</p></div>
+      <pre class="code">function min(a, b) {
+  if (typeof a !== "number" || typeof b !== "number") {
+    return "Not a number!";
+  }
+
+  return a &lt; b ? a : b; // або Math.min(a, b)
+}
+
+console.log(min(2343, 101)); // 101</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li>Спочатку <b>валідація</b>, тобто перевірка вхідних даних, потім основна логіка.</li>
+        <li><code>a &lt; b ? a : b</code>: якщо <code>a</code> менше, повертаємо його, інакше <code>b</code>.</li>
+      </ul></div>
+      <div class="note"><strong>Зауваження до коду в lesson-1.js</strong><ul>
+        <li><code>(a, b ? a : b)</code> — це оператор «кома»: він обчислює <code>a</code>, відкидає його і повертає <code>b ? a : b</code>. Порівняння тут немає. Правильно: <code>a &lt; b ? a : b</code>.</li>
+        <li>Коментарі <code>/* … */</code> не вкладаються. Внутрішній <code>*/</code> закриває зовнішній коментар раніше, ніж очікуєш. Те саме в задачах 1 і 10. Щоб вимкнути блок, краще виділи його і натисни <code>Ctrl/Cmd + /</code>.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls">
+          <div class="field"><label for="l8a">a</label><input id="l8a" type="text" value="2343"></div>
+          <div class="field"><label for="l8b">b</label><input id="l8b" type="text" value="101"></div>
+        </div>
+        <div class="steps" id="l8viz"></div>
+        <div class="console" id="l8out"></div>
+      </div>
+    </article>
+
+    <!-- L9 -->
+    <article class="task" id="l9">
+      <div class="task-head"><span class="task-no">9</span><h3>isAdult: повнолітній чи ні</h3>
+        <div class="chips"><span class="chip">||</span><span class="chip">коротке замикання</span><span class="chip">confirm</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond"><code>isAdult(age)</code> повертає <code>true</code>, якщо <code>age &gt;= 18</code>. Інакше питає підтвердження через <code>confirm</code> і повертає його результат.</p></div>
+      <pre class="code">function isAdult(age) {
+  // довгий варіант
+  // if (age >= 18) {
+  //   return true;
+  // }
+  // return confirm("Вам дійсно 18?");
+
+  return age >= 18 || confirm("Вам дійсно 18?");
+}</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><code>||</code> обчислюється зліва направо і зупиняється на першому істинному значенні. Це <b>коротке замикання</b>.</li>
+        <li>Якщо <code>age &gt;= 18</code>, результат уже <code>true</code>, і <code>confirm</code> <b>навіть не викликається</b>.</li>
+        <li>Якщо ні, <code>||</code> повертає те, що повернув <code>confirm</code>: <code>true</code> для OK або <code>false</code> для Скасувати.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls"><div class="field"><label for="l9a">age</label><input id="l9a" type="number" value="12"></div></div>
+        <div class="steps" id="l9viz"></div>
+        <div id="l9dialog"></div>
+        <div class="console" id="l9out"></div>
+      </div>
+    </article>
+
+    <!-- L10 -->
+    <article class="task" id="l10">
+      <div class="task-head"><span class="task-no">10</span><h3>fizzBuzz</h3>
+        <div class="chips"><span class="chip">for</span><span class="chip">%</span><span class="chip">порядок умов</span><span class="chip file">js/lesson-1.js</span></div></div>
+      <div><p class="label">Умова</p><p class="cond">Для кожного числа від 1 до <code>num</code>: ділиться на 3 → <code>'fizz'</code>, на 5 → <code>'buzz'</code>, і на 3, і на 5 → <code>'fizzbuzz'</code>.</p></div>
+      <pre class="code">function fizzBuzz(num) {
+  for (let i = 1; i &lt;= num; i++) {
+    if (i % 3 === 0 &amp;&amp; i % 5 === 0) {
+      console.log("fizzbuzz");
+    } else if (i % 3 === 0) {
+      console.log("fizz");
+    } else if (i % 5 === 0) {
+      console.log("buzz");
+    } else {
+      console.log(i);
+    }
+  }
+}
+
+fizzBuzz(15);</pre>
+      <div><p class="label">Як це працює</p><ul class="how">
+        <li><b>Порядок умов важливий</b>: перевірку «на 3 і на 5» ставимо першою. Інакше 15 зловить гілка <code>% 3</code>, і ми отримаємо лише <code>fizz</code>.</li>
+        <li><code>i % 3 === 0 &amp;&amp; i % 5 === 0</code> можна записати коротше: <code>i % 15 === 0</code>.</li>
+      </ul></div>
+      <div class="play">
+        <div class="controls"><div class="field"><label for="l10n">num: <b id="l10nv">30</b></label><input id="l10n" type="range" min="1" max="100" value="30"></div></div>
+        <div class="legend"><span class="num fizz">fizz</span><span class="num buzz">buzz</span><span class="num fizzbuzz">fizzbuzz</span></div>
+        <div class="nums" id="l10viz"></div>
+      </div>
+    </article>
+
+    <footer>Пісочниці перераховують результат при кожній зміні поля. Код у блоках виправлений і відповідає умовам; зауваження стосуються версії в js/lesson-1.js.</footer>
+  </main>
+  </body>
+</html>

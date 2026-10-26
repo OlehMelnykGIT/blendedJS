@@ -1,0 +1,329 @@
+/* =====================================================================
+   container.css — каркас сторінки уроку:
+   контейнер, шапка, зміст, заголовки груп, картка задачі
+   (номер → поняття → умова → код → пояснення → зауваження → демо → підказка).
+   ===================================================================== */
+
+/* ---------- Контейнер ---------- */
+
+body {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding-block: 32px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ---------- Шапка і зміст ---------- */
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.lede {
+  margin: 0;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.toc {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px 32px;
+  padding: 20px 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.toc h2 {
+  margin: 0 0 6px;
+  font-size: 15px;
+}
+
+.toc ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  display: grid;
+  gap: 2px;
+}
+
+.toc a {
+  display: flex;
+  gap: 8px;
+}
+
+.toc a span {
+  min-width: 2em;
+  padding-top: 2px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.part-title {
+  margin: 24px 0 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  font-size: 20px;
+}
+
+/* ---------- Картка задачі ---------- */
+
+.task {
+  scroll-margin-top: 16px;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (max-width: 560px) {
+  .task {
+    padding: 18px 14px;
+  }
+}
+
+.task-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 12px;
+}
+
+.task-no {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.task-head h3 {
+  flex: 1 1 240px;
+  margin: 0;
+  font-size: 22px;
+}
+
+.chips {
+  flex-basis: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-size: 13px;
+  font-family: var(--mono);
+}
+
+.chip.file {
+  padding: 1px 6px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--code-bg);
+  color: var(--muted);
+}
+
+.chip.file::before {
+  content: "📁 Файл: ";
+  font-family: var(--sans);
+}
+
+.label {
+  margin: 0 0 4px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.cond {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.how {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  display: grid;
+  gap: 4px;
+}
+
+/* ---------- Код ---------- */
+
+pre.code {
+  margin: 0;
+  padding: 16px;
+  background: var(--pre-bg);
+  color: var(--pre-text);
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 13px;
+  line-height: 1.5;
+  tab-size: 2;
+}
+
+.tk-c {
+  color: var(--pre-muted);
+  font-style: italic;
+}
+.tk-s {
+  color: var(--code-str);
+}
+.tk-k {
+  color: var(--code-kw);
+}
+.tk-n {
+  color: var(--code-num);
+}
+.tk-f {
+  color: var(--code-fn);
+}
+
+/* ---------- Зауваження до коду ---------- */
+
+.note {
+  position: relative;
+  padding: 28px 16px 16px;
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+  background: var(--error-bg);
+  font-size: 14px;
+}
+
+.note strong {
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--error-text);
+}
+
+.note strong::before {
+  content: "❌ ";
+}
+
+.note ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 4px;
+}
+
+/* ---------- Рамка «Живе демо» ---------- */
+
+.play {
+  position: relative;
+  padding: 28px 16px 16px;
+  border: 2px dashed var(--demo-border);
+  border-radius: 8px;
+  background: var(--demo-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.play::before {
+  content: "Живе демо";
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+/* ---------- Підказка внизу ---------- */
+
+footer {
+  margin: 0;
+  padding: 10px 14px;
+  background: var(--tip-bg);
+  border-left: 4px solid var(--tip-border);
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+footer::before {
+  content: "💡 ";
+}
+
+/* ---------- Список уроків (index.html) ---------- */
+
+.lessons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.lessons a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+}
+
+.lessons a:hover {
+  border-color: var(--accent);
+  text-decoration: none;
+}
+
+.lessons b {
+  display: block;
+  color: var(--text-h);
+}
+
+.lessons small {
+  color: var(--muted);
+  font-size: 14px;
+}

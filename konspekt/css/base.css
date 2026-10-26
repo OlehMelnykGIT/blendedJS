@@ -1,0 +1,197 @@
+/* =====================================================================
+   base.css — загальні правила для всіх уроків:
+   кольори (світла й темна тема), шрифти, reset, текст, кнопки, поля вводу.
+   ===================================================================== */
+
+:root {
+  --text: #3a3a3a;
+  --text-h: #1a1a1a;
+  --muted: #666b75;
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --border: #e1e4e8;
+  --accent: #3178c6;
+  --accent-bg: #e8f1fb;
+  --accent-text: #0a4f96;
+  --on-accent: #ffffff;
+  --code-bg: #f1f3f5;
+  --pre-bg: #1e1e2e;
+  --pre-text: #e6e6e6;
+  --pre-muted: #8b90a7;
+  --demo-bg: #fbfdff;
+  --demo-border: #b6d4f2;
+  --error-bg: #fff1f0;
+  --error-border: #f3b4ae;
+  --error-text: #b42318;
+  --tip-bg: #fff8e1;
+  --tip-border: #f5b400;
+  --ok: #1a7f4b;
+  --ok-bg: #e3f5eb;
+  --marker: #f5d547;
+  --marker-ink: #2a2300;
+  --code-kw: #9cc7f7;
+  --code-str: #f5d547;
+  --code-num: #ff9d7a;
+  --code-fn: #7fe0b8;
+
+  --sans: system-ui, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, Menlo, Consolas, monospace;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --text: #c9cdd4;
+    --text-h: #f3f4f6;
+    --muted: #9ca3af;
+    --bg: #16171d;
+    --card: #1f2028;
+    --border: #2e303a;
+    --accent: #5aa0f2;
+    --accent-bg: #1d2b3d;
+    --accent-text: #9cc7f7;
+    --on-accent: #0d1420;
+    --code-bg: #2a2c36;
+    --pre-bg: #121318;
+    --demo-bg: #1a1c23;
+    --demo-border: #2f4d70;
+    --error-bg: #2a1a1a;
+    --error-border: #6b2b26;
+    --error-text: #f4a29a;
+    --tip-bg: #2a2516;
+    --tip-border: #b38600;
+    --ok: #6fd3a0;
+    --ok-bg: #16301f;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --text: #c9cdd4;
+  --text-h: #f3f4f6;
+  --muted: #9ca3af;
+  --bg: #16171d;
+  --card: #1f2028;
+  --border: #2e303a;
+  --accent: #5aa0f2;
+  --accent-bg: #1d2b3d;
+  --accent-text: #9cc7f7;
+  --on-accent: #0d1420;
+  --code-bg: #2a2c36;
+  --pre-bg: #121318;
+  --demo-bg: #1a1c23;
+  --demo-border: #2f4d70;
+  --error-bg: #2a1a1a;
+  --error-border: #6b2b26;
+  --error-text: #f4a29a;
+  --tip-bg: #2a2516;
+  --tip-border: #b38600;
+  --ok: #6fd3a0;
+  --ok-bg: #16301f;
+  color-scheme: dark;
+}
+
+/* ---------- Reset і текст ---------- */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 var(--sans);
+}
+
+h1,
+h2,
+h3 {
+  color: var(--text-h);
+  text-wrap: balance;
+}
+
+h1 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+code,
+pre,
+kbd {
+  font-family: var(--mono);
+}
+
+/* Інлайн-код у тексті */
+p code,
+li code {
+  background: var(--code-bg);
+  color: var(--text-h);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+/* ---------- Кнопки і поля ---------- */
+
+button {
+  font: inherit;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--on-accent);
+  cursor: pointer;
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--accent);
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 7px 10px;
+  font: 14px var(--mono);
+  color: var(--text-h);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+input:disabled {
+  opacity: 0.5;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+input:focus-visible,
+select:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
