@@ -44,9 +44,18 @@ export function renderCases(el, cases, value, defLabel) {
     `<div class="${hit === -1 ? "hit" : ""}"><span>default:</span><span>${esc(defLabel)}</span></div>`;
   return hit === -1 ? null : cases[hit][1];
 }
-const shipping = [["China", 100], ["Chile", 250], ["Australia", 170], ["Jamaica", 120]];
-live(["h4c"], () => {
-  const c = $("h4c").value;
-  const price = renderCases("h4viz", shipping, c, "return \"Sorry…\"");
-  printTo("h4out", [["ret", show(price === null ? "Sorry, there is no delivery to your country" : `Shipping to ${c} will cost ${price} credits`)]]);
-});
+
+// --- масиви ---
+// "1, 2, \"3\"" → [1, 2, "3"]; порожній рядок → []
+export function parseList(raw) {
+  if (raw.trim() === "") return [];
+  return raw.split(",").map(parseArg);
+}
+
+// Масив комірками з індексами. marks: { індекс: "hit" | "new" | "dim" }
+export function renderArray(items, marks = {}) {
+  if (items.length === 0) return '<div class="arr"><span class="arr-empty">[ ]</span></div>';
+  return `<div class="arr">${items
+    .map((v, i) => `<div class="cell ${marks[i] || ""}"><small>${i}</small><span>${esc(show(v))}</span></div>`)
+    .join("")}</div>`;
+}

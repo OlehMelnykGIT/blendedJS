@@ -333,3 +333,206 @@
 .msg .steps {
   margin-top: 6px;
 }
+
+/* ---------- Масив комірками з індексами ---------- */
+
+.arr {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cell {
+  min-width: 44px;
+  display: grid;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  overflow: hidden;
+}
+
+.cell small {
+  padding: 1px 6px;
+  font-size: 10px;
+  color: var(--muted);
+  background: var(--code-bg);
+  border-bottom: 1px solid var(--border);
+}
+
+.cell span {
+  padding: 4px 8px;
+}
+
+.cell.hit {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+  color: var(--accent-text);
+  font-weight: 600;
+}
+
+.cell.new {
+  border-color: var(--ok);
+  background: var(--ok-bg);
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.cell.dim {
+  opacity: 0.35;
+  text-decoration: line-through;
+}
+
+.arr-empty {
+  font-family: var(--mono);
+  color: var(--muted);
+}
+
+/* Рядок «операція → стан масиву» */
+.op {
+  display: grid;
+  grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
+  gap: 6px 12px;
+  align-items: center;
+}
+
+.op > code {
+  font-size: 13px;
+  color: var(--text-h);
+}
+
+@media (max-width: 560px) {
+  .op {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---------- Два виводи поруч: помилковий і правильний ---------- */
+
+.split {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.split > div {
+  min-width: 0;
+}
+
+/* ---------- Пари сусідніх чисел ---------- */
+
+.pairs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.pairs div {
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.pairs small {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.pairs b {
+  color: var(--ok);
+}
+
+/* ---------- Об'єкт: ключ → значення ---------- */
+
+.obj {
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  font-family: var(--mono);
+  font-size: 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+}
+
+.obj div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.obj .k {
+  color: var(--accent-text);
+}
+
+.obj .new {
+  background: var(--ok-bg);
+  color: var(--ok);
+}
+
+.obj .changed {
+  background: var(--tip-bg);
+}
+
+.obj .missing {
+  color: var(--muted);
+  font-style: italic;
+}
+
+/* ---------- Таблиця даних ---------- */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+table.data th,
+table.data td {
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+table.data th {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+table.data td.num-col,
+table.data th.num-col {
+  text-align: right;
+  font-family: var(--mono);
+}
+
+table.data tr.hit td {
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+table.data tr.dim td {
+  color: var(--muted);
+}
+
+table.data tfoot td {
+  border-bottom: none;
+  font-weight: 700;
+  color: var(--text-h);
+}

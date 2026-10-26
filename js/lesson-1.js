@@ -78,6 +78,14 @@ live(["h3m"], () => {
   printTo("h3out", [["ret", show(hasSpam || hasSale)]]);
 });
 
+// --- H4 ---
+const shipping = [["China", 100], ["Chile", 250], ["Australia", 170], ["Jamaica", 120]];
+live(["h4c"], () => {
+  const c = $("h4c").value;
+  const price = renderCases("h4viz", shipping, c, "return \"Sorry…\"");
+  printTo("h4out", [["ret", show(price === null ? "Sorry, there is no delivery to your country" : `Shipping to ${c} will cost ${price} credits`)]]);
+});
+
 // --- L1 ---
 live(["l1n"], () => {
   const raw = $("l1n").value,
