@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "cd lesson-5-vite && npm ci",
+  "buildCommand": "rm -rf _site && mkdir _site && cp -R index.html lesson-*.html css js js-inKlass _site/ && cd lesson-5-vite && npx vite build --base=/lesson-5-vite/ --outDir ../../_site/lesson-5-vite",
+  "outputDirectory": "_site"
+}
