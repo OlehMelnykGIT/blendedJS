@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Заняття 5 · пісочниця: список справ</title>
+    <link rel="stylesheet" href="css/lesson-5.css" />
+  </head>
+  <!-- Розмітка з lesson-5-vite/src (index.html + partials). Сам застосунок: cd lesson-5-vite && npm run dev -->
+  <body class="theme-dark">
+    <header class="header">
+      <div class="container header-container">
+        <span class="logo">Tasks</span>
+        <div class="header-right-side-wrapper">
+          <button id="themeToggle" class="theme-toggle-button">Change Theme</button>
+          <form class="header-form" id="task-form">
+            <input class="header-form-input" type="text" name="taskName" placeholder="Title" />
+            <input class="header-form-input" type="text" name="taskDescription" placeholder="Description" />
+            <button class="header-form-btn" type="submit">Add</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="container">
+          <ul class="tasks-list" id="task-list"></ul>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -2,7 +2,10 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>Blended JS · Заняття 2</title>
     <meta name="claude:viewport-fit-sides" content="cover" />
     <link rel="stylesheet" href="css/base.css" />
@@ -11,49 +14,97 @@
     <script type="module" src="js/lesson-2.js"></script>
   </head>
   <body>
-  <main>
-    <header class="intro">
-      <div class="eyebrow"><a href="index.html">← Усі уроки</a> · blendedJS · js-inKlass/lesson-2.js</div>
-      <h1>JavaScript: заняття 2. Масиви та об'єкти</h1>
-      <p class="lede">Конспект другого заняття: методи масивів, перебір циклами <code>for</code> і <code>for...of</code>, rest-параметри, об'єкти, <code>Object.keys / values / entries</code> і методи з <code>this</code>. У кожної задачі є умова, робоче рішення, пояснення і пісочниця.</p>
-      <div class="legend">
-        <span class="pill neutral">› console.log</span>
-        <span class="pill neutral">alert › повідомлення</span>
-        <span class="pill neutral">return › значення функції</span>
-      </div>
-    </header>
+    <main>
+      <header class="intro">
+        <div class="eyebrow">
+          <a href="index.html">← Усі уроки</a> · blendedJS ·
+          js-inKlass/lesson-2.js
+        </div>
+        <h1>JavaScript: заняття 2. Масиви та об'єкти</h1>
+        <p class="lede">
+          Конспект другого заняття: методи масивів, перебір циклами
+          <code>for</code> і <code>for...of</code>, rest-параметри, об'єкти,
+          <code>Object.keys / values / entries</code> і методи з
+          <code>this</code>. У кожної задачі є умова, робоче рішення, пояснення
+          і пісочниця.
+        </p>
+        <div class="legend">
+          <span class="pill neutral">› console.log</span>
+          <span class="pill neutral">alert › повідомлення</span>
+          <span class="pill neutral">return › значення функції</span>
+        </div>
+      </header>
 
-    <nav class="toc" aria-label="Зміст">
-      <div>
-        <h2>Масиви</h2>
-        <ol>
-          <li><a href="#t1"><span>1</span>styles і logItems</a></li>
-          <li><a href="#t2"><span>2</span>checkLogin</a></li>
-          <li><a href="#t3"><span>3</span>Середнє значення</a></li>
-          <li><a href="#t4"><span>4</span>Сума сусідніх чисел</a></li>
-          <li><a href="#t5"><span>5</span>Найменше число</a></li>
-          <li><a href="#t6"><span>6</span>Найдовше слово</a></li>
-        </ol>
-      </div>
-      <div>
-        <h2>Об'єкти</h2>
-        <ol>
-          <li><a href="#t7"><span>7</span>Змінюємо об'єкт user</a></li>
-          <li><a href="#t8"><span>8</span>Сума зарплат</a></li>
-          <li><a href="#t9"><span>9</span>calculator і this</a></li>
-          <li><a href="#t10"><span>10</span>calcTotalPrice</a></li>
-        </ol>
-      </div>
-    </nav>
+      <nav class="toc" aria-label="Зміст">
+        <div>
+          <h2>Масиви</h2>
+          <ol>
+            <li>
+              <a href="#t1"><span>1</span>styles і logItems</a>
+            </li>
+            <li>
+              <a href="#t2"><span>2</span>checkLogin</a>
+            </li>
+            <li>
+              <a href="#t3"><span>3</span>Середнє значення</a>
+            </li>
+            <li>
+              <a href="#t4"><span>4</span>Сума сусідніх чисел</a>
+            </li>
+            <li>
+              <a href="#t5"><span>5</span>Найменше число</a>
+            </li>
+            <li>
+              <a href="#t6"><span>6</span>Найдовше слово</a>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <h2>Об'єкти</h2>
+          <ol>
+            <li>
+              <a href="#t7"><span>7</span>Змінюємо об'єкт user</a>
+            </li>
+            <li>
+              <a href="#t8"><span>8</span>Сума зарплат</a>
+            </li>
+            <li>
+              <a href="#t9"><span>9</span>calculator і this</a>
+            </li>
+            <li>
+              <a href="#t10"><span>10</span>calcTotalPrice</a>
+            </li>
+          </ol>
+        </div>
+      </nav>
 
-    <h2 class="part-title">Масиви</h2>
+      <h2 class="part-title">Масиви</h2>
 
-    <!-- 1 -->
-    <article class="task" id="t1">
-      <div class="task-head"><span class="task-no">1</span><h3>Масив styles і функція logItems</h3>
-        <div class="chips"><span class="chip">push</span><span class="chip">indexOf</span><span class="chip">arr[i] = …</span><span class="chip">for</span><span class="chip">for...of</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond">Створити масив <code>styles</code> з <code>'jazz'</code> і <code>'blues'</code>, додати в кінець <code>'rock-n-roll'</code>, знайти <code>'blues'</code> і замінити на <code>'classic'</code>. Потім написати <code>logItems(array)</code>, яка циклом <code>for</code> виводить <code>"&lt;номер&gt; - &lt;значення&gt;"</code>, нумерація з 1.</p></div>
-      <pre class="code">const styles = ["jazz", "blues"];
+      <!-- 1 -->
+      <article class="task" id="t1">
+        <div class="task-head">
+          <span class="task-no">1</span>
+          <h3>Масив styles і функція logItems</h3>
+          <div class="chips">
+            <span class="chip">push</span><span class="chip">indexOf</span
+            ><span class="chip">arr[i] = …</span><span class="chip">for</span
+            ><span class="chip">for...of</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            Створити масив <code>styles</code> з <code>'jazz'</code> і
+            <code>'blues'</code>, додати в кінець <code>'rock-n-roll'</code>,
+            знайти <code>'blues'</code> і замінити на <code>'classic'</code>.
+            Потім написати <code>logItems(array)</code>, яка циклом
+            <code>for</code> виводить
+            <code>"&lt;номер&gt; - &lt;значення&gt;"</code>, нумерація з 1.
+          </p>
+        </div>
+        <pre class="code">
+const styles = ["jazz", "blues"];
 styles.push("rock-n-roll");
 
 const index = styles.indexOf("blues");
@@ -72,30 +123,71 @@ logItems(styles);
 // for...of — коли індекс не потрібен
 for (const style of styles) {
   console.log(style);
-}</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><code>push</code> додає елемент у кінець і <b>змінює</b> сам масив.</li>
-        <li><code>indexOf</code> повертає індекс першого збігу або <code>-1</code>, якщо елемента немає. Тому перевіряємо <code>index !== -1</code> перед заміною.</li>
-        <li>Індекси починаються з 0, тому для людської нумерації виводимо <code>i + 1</code>.</li>
-        <li><code>for</code> дає доступ до індексу, а <code>for...of</code> коротший, коли потрібні лише значення.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls">
-          <div class="field"><label for="t1push">push(…)</label><input id="t1push" type="text" value="rock-n-roll"></div>
-          <div class="field"><label for="t1find">indexOf(…)</label><input id="t1find" type="text" value="blues"></div>
-          <div class="field"><label for="t1repl">замінити на</label><input id="t1repl" type="text" value="classic"></div>
+}</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <code>push</code> додає елемент у кінець і <b>змінює</b> сам
+              масив.
+            </li>
+            <li>
+              <code>indexOf</code> повертає індекс першого збігу або
+              <code>-1</code>, якщо елемента немає. Тому перевіряємо
+              <code>index !== -1</code> перед заміною.
+            </li>
+            <li>
+              Індекси починаються з 0, тому для нумерації виводимо
+              <code>i + 1</code>.
+            </li>
+            <li>
+              <code>for</code> дає доступ до індексу, а
+              <code>for...of</code> коротший, коли потрібні лише значення.
+            </li>
+          </ul>
         </div>
-        <div class="steps" id="t1viz"></div>
-        <div class="console" id="t1out"></div>
-      </div>
-    </article>
+        <div class="play">
+          <div class="controls">
+            <div class="field">
+              <label for="t1push">push(…)</label
+              ><input id="t1push" type="text" value="rock-n-roll" />
+            </div>
+            <div class="field">
+              <label for="t1find">indexOf(…)</label
+              ><input id="t1find" type="text" value="blues" />
+            </div>
+            <div class="field">
+              <label for="t1repl">замінити на</label
+              ><input id="t1repl" type="text" value="classic" />
+            </div>
+          </div>
+          <div class="steps" id="t1viz"></div>
+          <div class="console" id="t1out"></div>
+        </div>
+      </article>
 
-    <!-- 2 -->
-    <article class="task" id="t2">
-      <div class="task-head"><span class="task-no">2</span><h3>checkLogin: чи є ім'я в масиві</h3>
-        <div class="chips"><span class="chip">includes</span><span class="chip">for...of</span><span class="chip">return у циклі</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond"><code>checkLogin(array)</code> питає ім'я через <code>prompt</code>. Якщо воно є в масиві, показує <code>"Welcome, &lt;name&gt;!"</code>, інакше <code>"User not found"</code>.</p></div>
-      <pre class="code">const logins = ["Peter", "John", "Igor", "Sasha"];
+      <!-- 2 -->
+      <article class="task" id="t2">
+        <div class="task-head">
+          <span class="task-no">2</span>
+          <h3>checkLogin: чи є ім'я в масиві</h3>
+          <div class="chips">
+            <span class="chip">includes</span><span class="chip">for...of</span
+            ><span class="chip">return у циклі</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            <code>checkLogin(array)</code> питає ім'я через <code>prompt</code>.
+            Якщо воно є в масиві, показує <code>"Welcome, &lt;name&gt;!"</code>,
+            інакше <code>"User not found"</code>.
+          </p>
+        </div>
+        <pre class="code">
+const logins = ["Peter", "John", "Igor", "Sasha"];
 
 function checkLogin(array) {
   const login = prompt("What is your name?");
@@ -118,31 +210,79 @@ function checkLoginLoop(array) {
     }
   }
   alert("User not found");
-}</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><code>includes</code> сам перебирає масив і повертає <code>true</code> або <code>false</code>. Для перевірки «чи є» це найкоротший варіант.</li>
-        <li>У циклі <code>return</code> одразу виходить з функції, коли ім'я знайдено.</li>
-        <li>Висновок «не знайдено» можна зробити, лише коли переглянули <b>весь</b> масив, тобто після циклу.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження до коду в lesson-2.js</strong><ul>
-        <li><code>alert("User not found")</code> стоїть <b>всередині</b> циклу. Для <code>"Igor"</code> ти побачиш «User not found» двічі (на Peter і John), а потім «Welcome». Подивись на це в демо.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls"><div class="field"><label for="t2n">Що ввели в prompt</label><input id="t2n" type="text" value="Igor"></div></div>
-        <div class="steps" id="t2viz"></div>
-        <div class="split">
-          <div><p class="label">Твій цикл (alert у циклі)</p><div class="console" id="t2bad"></div></div>
-          <div><p class="label">Правильно</p><div class="console" id="t2out"></div></div>
+}</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <code>includes</code> сам перебирає масив і повертає
+              <code>true</code> або <code>false</code>. Для перевірки «чи є» це
+              найкоротший варіант.
+            </li>
+            <li>
+              У циклі <code>return</code> одразу виходить з функції, коли ім'я
+              знайдено.
+            </li>
+            <li>
+              Висновок «не знайдено» можна зробити, лише коли переглянули
+              <b>весь</b> масив, тобто після циклу.
+            </li>
+          </ul>
         </div>
-      </div>
-    </article>
+        <div class="note">
+          <strong>Зауваження до коду в lesson-2.js</strong>
+          <ul>
+            <li>
+              <code>alert("User not found")</code> стоїть
+              <b>всередині</b> циклу. Для <code>"Igor"</code> ти побачиш «User
+              not found» двічі (на Peter і John), а потім «Welcome». Подивись на
+              це в демо.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field">
+              <label for="t2n">Що ввели в prompt</label
+              ><input id="t2n" type="text" value="Igor" />
+            </div>
+          </div>
+          <div class="steps" id="t2viz"></div>
+          <div class="split">
+            <div>
+              <p class="label">Твій цикл (alert у циклі)</p>
+              <div class="console" id="t2bad"></div>
+            </div>
+            <div>
+              <p class="label">Правильно</p>
+              <div class="console" id="t2out"></div>
+            </div>
+          </div>
+        </div>
+      </article>
 
-    <!-- 3 -->
-    <article class="task" id="t3">
-      <div class="task-head"><span class="task-no">3</span><h3>Середнє значення довільної кількості аргументів</h3>
-        <div class="chips"><span class="chip">...args</span><span class="chip">typeof</span><span class="chip">|| 0</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond"><code>calculateAverage()</code> приймає будь-яку кількість аргументів і повертає їхнє середнє значення. Враховуються тільки числа.</p></div>
-      <pre class="code">function calculateAverage(...args) {
+      <!-- 3 -->
+      <article class="task" id="t3">
+        <div class="task-head">
+          <span class="task-no">3</span>
+          <h3>Середнє значення довільної кількості аргументів</h3>
+          <div class="chips">
+            <span class="chip">...args</span><span class="chip">typeof</span
+            ><span class="chip">|| 0</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            <code>calculateAverage()</code> приймає будь-яку кількість
+            аргументів і повертає їхнє середнє значення. Враховуються тільки
+            числа.
+          </p>
+        </div>
+        <pre class="code">
+function calculateAverage(...args) {
   let sum = 0;
   let count = 0;
 
@@ -158,28 +298,70 @@ function checkLoginLoop(array) {
 
 console.log(calculateAverage(1, 2, 3));       // 2
 console.log(calculateAverage("2", 2, 3));     // 2.5
-console.log(calculateAverage("1", "2", "3")); // 0</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><b>Rest-параметр</b> <code>...args</code> збирає всі передані аргументи у справжній масив.</li>
-        <li>Рахуємо не <code>args.length</code>, а окремий <code>count</code>, бо рядки пропускаємо.</li>
-        <li>Без чисел вийшло б <code>0 / 0 = NaN</code>. Твій варіант <code>sum / count || 0</code> теж працює: <code>NaN</code> хибне, тому <code>||</code> поверне 0.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження до коду в lesson-2.js</strong><ul>
-        <li>Описка в назві: <code>caclculateAverage</code> → <code>calculateAverage</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls"><div class="field wide"><label for="t3a">Аргументи через кому (рядок бери в лапки: "2")</label><input id="t3a" type="text" value='"2", 2, 3'></div></div>
-        <div class="steps" id="t3viz"></div>
-        <div class="console" id="t3out"></div>
-      </div>
-    </article>
+console.log(calculateAverage("1", "2", "3")); // 0</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <b>Rest-параметр</b> <code>...args</code> збирає всі передані
+              аргументи у справжній масив.
+            </li>
+            <li>
+              Рахуємо не <code>args.length</code>, а окремий <code>count</code>,
+              бо рядки пропускаємо.
+            </li>
+            <li>
+              Без чисел вийшло б <code>0 / 0 = NaN</code>. Твій варіант
+              <code>sum / count || 0</code> теж працює: <code>NaN</code> хибне,
+              тому <code>||</code> поверне 0.
+            </li>
+          </ul>
+        </div>
+        <div class="note">
+          <strong>Зауваження до коду в lesson-2.js</strong>
+          <ul>
+            <li>
+              Описка в назві: <code>caclculateAverage</code> →
+              <code>calculateAverage</code>.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field wide">
+              <label for="t3a"
+                >Аргументи через кому (рядок бери в лапки: "2")</label
+              ><input id="t3a" type="text" value='"2", 2, 3' />
+            </div>
+          </div>
+          <div class="steps" id="t3viz"></div>
+          <div class="console" id="t3out"></div>
+        </div>
+      </article>
 
-    <!-- 4 -->
-    <article class="task" id="t4">
-      <div class="task-head"><span class="task-no">4</span><h3>Сума сусідніх чисел</h3>
-        <div class="chips"><span class="chip">for</span><span class="chip">array[i + 1]</span><span class="chip">length - 1</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond">Скласти перше число з другим, друге з третім і так до кінця, результати зібрати в новий масив. Для <code>[22, 11, 34, 5, 12, 13, 14, 15]</code> вийде <code>[33, 45, 39, 17, 25, 27, 29]</code>.</p></div>
-      <pre class="code">const someArr = [22, 11, 34, 5, 12, 13, 14, 15];
+      <!-- 4 -->
+      <article class="task" id="t4">
+        <div class="task-head">
+          <span class="task-no">4</span>
+          <h3>Сума сусідніх чисел</h3>
+          <div class="chips">
+            <span class="chip">for</span><span class="chip">array[i + 1]</span
+            ><span class="chip">length - 1</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            Скласти перше число з другим, друге з третім і так до кінця,
+            результати зібрати в новий масив. Для
+            <code>[22, 11, 34, 5, 12, 13, 14, 15]</code> вийде
+            <code>[33, 45, 39, 17, 25, 27, 29]</code>.
+          </p>
+        </div>
+        <pre class="code">
+const someArr = [22, 11, 34, 5, 12, 13, 14, 15];
 
 function sumNeighbours(array) {
   const result = [];
@@ -191,25 +373,64 @@ function sumNeighbours(array) {
   return result;
 }
 
-console.log(sumNeighbours(someArr)); // [33, 45, 39, 17, 25, 27, 29]</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li>Пар на одну менше, ніж елементів, тому умова <code>i &lt; array.length - 1</code>.</li>
-        <li>Якби дійшли до останнього <code>i</code>, то <code>array[i + 1]</code> було б <code>undefined</code>, і сума дала б <code>NaN</code>.</li>
-        <li>Оригінальний масив не змінюється, результат іде в новий <code>result</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls"><div class="field wide"><label for="t4a">Масив чисел через кому</label><input id="t4a" type="text" value="22, 11, 34, 5, 12, 13, 14, 15"></div></div>
-        <div class="pairs" id="t4viz"></div>
-        <div class="console" id="t4out"></div>
-      </div>
-    </article>
+console.log(sumNeighbours(someArr)); // [33, 45, 39, 17, 25, 27, 29]</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              Пар на одну менше, ніж елементів, тому умова
+              <code>i &lt; array.length - 1</code>.
+            </li>
+            <li>
+              Якби дійшли до останнього <code>i</code>, то
+              <code>array[i + 1]</code> було б <code>undefined</code>, і сума
+              дала б <code>NaN</code>.
+            </li>
+            <li>
+              Оригінальний масив не змінюється, результат іде в новий
+              <code>result</code>.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field wide">
+              <label for="t4a">Масив чисел через кому</label
+              ><input
+                id="t4a"
+                type="text"
+                value="22, 11, 34, 5, 12, 13, 14, 15"
+              />
+            </div>
+          </div>
+          <div class="pairs" id="t4viz"></div>
+          <div class="console" id="t4out"></div>
+        </div>
+      </article>
 
-    <!-- 5 -->
-    <article class="task" id="t5">
-      <div class="task-head"><span class="task-no">5</span><h3>Найменше число в масиві</h3>
-        <div class="chips"><span class="chip">Array.isArray</span><span class="chip">for...of</span><span class="chip">Math.min(...arr)</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond"><code>findSmallestNumber(numbers)</code> повертає найменше число масиву. Якщо передали не масив, повертає <code>'Sorry, it is not an array!'</code>.</p></div>
-      <pre class="code">const numbers = [2, 5, 35, 56, 12, 24, 7, 80, 3];
+      <!-- 5 -->
+      <article class="task" id="t5">
+        <div class="task-head">
+          <span class="task-no">5</span>
+          <h3>Найменше число в масиві</h3>
+          <div class="chips">
+            <span class="chip">Array.isArray</span
+            ><span class="chip">for...of</span
+            ><span class="chip">Math.min(...arr)</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            <code>findSmallestNumber(numbers)</code> повертає найменше число
+            масиву. Якщо передали не масив, повертає
+            <code>'Sorry, it is not an array!'</code>.
+          </p>
+        </div>
+        <pre class="code">
+const numbers = [2, 5, 35, 56, 12, 24, 7, 80, 3];
 
 function findSmallestNumber(numbers) {
   if (!Array.isArray(numbers)) {
@@ -228,26 +449,71 @@ function findSmallestNumber(numbers) {
 }
 
 console.log(findSmallestNumber(numbers)); // 2
-console.log(findSmallestNumber("abc"));   // "Sorry, it is not an array!"</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><code>typeof []</code> повертає <code>"object"</code>, тому масив перевіряємо через <code>Array.isArray()</code>.</li>
-        <li>Беремо перший елемент як «поки що найменший» і порівнюємо з ним решту.</li>
-        <li>Коротший варіант: <code>Math.min(...numbers)</code>. Spread <code>...</code> розкладає масив на окремі аргументи.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження</strong><ul><li>У lesson-2.js тіло функції поки порожнє. Вище готове рішення.</li></ul></div>
-      <div class="play">
-        <div class="controls"><div class="field wide"><label for="t5a">Аргумент: числа через кому → масив; будь-що в лапках → рядок</label><input id="t5a" type="text" value="2, 5, 35, 56, 12, 24, 7, 80, 3"></div></div>
-        <div class="viz" id="t5viz"></div>
-        <div class="console" id="t5out"></div>
-      </div>
-    </article>
+console.log(findSmallestNumber("abc"));   // "Sorry, it is not an array!"</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <code>typeof []</code> повертає <code>"object"</code>, тому масив
+              перевіряємо через <code>Array.isArray()</code>.
+            </li>
+            <li>
+              Беремо перший елемент як «поки що найменший» і порівнюємо з ним
+              решту.
+            </li>
+            <li>
+              Коротший варіант: <code>Math.min(...numbers)</code>. Spread
+              <code>...</code> розкладає масив на окремі аргументи.
+            </li>
+          </ul>
+        </div>
+        <div class="note">
+          <strong>Зауваження</strong>
+          <ul>
+            <li>
+              У lesson-2.js тіло функції поки порожнє. Вище готове рішення.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field wide">
+              <label for="t5a"
+                >Аргумент: числа через кому → масив; будь-що в лапках →
+                рядок</label
+              ><input
+                id="t5a"
+                type="text"
+                value="2, 5, 35, 56, 12, 24, 7, 80, 3"
+              />
+            </div>
+          </div>
+          <div class="viz" id="t5viz"></div>
+          <div class="console" id="t5out"></div>
+        </div>
+      </article>
 
-    <!-- 6 -->
-    <article class="task" id="t6">
-      <div class="task-head"><span class="task-no">6</span><h3>Найдовше слово в реченні</h3>
-        <div class="chips"><span class="chip">split(" ")</span><span class="chip">length</span><span class="chip">for...of</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond"><code>findLongestWord(string)</code> приймає речення зі слів через пробіл і повертає найдовше слово.</p></div>
-      <pre class="code">function findLongestWord(string) {
+      <!-- 6 -->
+      <article class="task" id="t6">
+        <div class="task-head">
+          <span class="task-no">6</span>
+          <h3>Найдовше слово в реченні</h3>
+          <div class="chips">
+            <span class="chip">split(" ")</span><span class="chip">length</span
+            ><span class="chip">for...of</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            <code>findLongestWord(string)</code> приймає речення зі слів через
+            пробіл і повертає найдовше слово.
+          </p>
+        </div>
+        <pre class="code">
+function findLongestWord(string) {
   const words = string.split(" ");
   let longest = "";
 
@@ -260,28 +526,73 @@ console.log(findSmallestNumber("abc"));   // "Sorry, it is not an array!"</pre>
   return longest;
 }
 
-console.log(findLongestWord("London is the capital of Great Britain")); // "capital"</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><code>split(" ")</code> ділить рядок за пробілами і повертає масив слів.</li>
-        <li>Порівнюємо <b>довжини</b>, а зберігаємо саме слово.</li>
-        <li>Через строге <code>&gt;</code> при однаковій довжині лишається перше знайдене слово.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження</strong><ul><li>У lesson-2.js цю задачу ще не розв'язано. Вище готове рішення.</li></ul></div>
-      <div class="play">
-        <div class="controls"><div class="field wide"><label for="t6a">string</label><input id="t6a" type="text" value="London is the capital of Great Britain"></div></div>
-        <div class="nums" id="t6viz"></div>
-        <div class="console" id="t6out"></div>
-      </div>
-    </article>
+console.log(findLongestWord("London is the capital of Great Britain")); // "capital"</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <code>split(" ")</code> ділить рядок за пробілами і повертає масив
+              слів.
+            </li>
+            <li>Порівнюємо <b>довжини</b>, а зберігаємо саме слово.</li>
+            <li>
+              Через строге <code>&gt;</code> при однаковій довжині лишається
+              перше знайдене слово.
+            </li>
+          </ul>
+        </div>
+        <div class="note">
+          <strong>Зауваження</strong>
+          <ul>
+            <li>
+              У lesson-2.js цю задачу ще не розв'язано. Вище готове рішення.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field wide">
+              <label for="t6a">string</label
+              ><input
+                id="t6a"
+                type="text"
+                value="London is the capital of Great Britain"
+              />
+            </div>
+          </div>
+          <div class="nums" id="t6viz"></div>
+          <div class="console" id="t6out"></div>
+        </div>
+      </article>
 
-    <h2 class="part-title">Об'єкти</h2>
+      <h2 class="part-title">Об'єкти</h2>
 
-    <!-- 7 -->
-    <article class="task" id="t7">
-      <div class="task-head"><span class="task-no">7</span><h3>Змінюємо об'єкт user і виводимо ключі</h3>
-        <div class="chips"><span class="chip">obj.key = …</span><span class="chip">Object.keys</span><span class="chip">Object.entries</span><span class="chip">obj[key]</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond">Для об'єкта <code>user</code>: додати <code>mood: 'happy'</code>, замінити <code>hobby</code> на <code>'skydiving'</code> і <code>premium</code> на <code>false</code>. Потім вивести <code>'&lt;ключ&gt;:&lt;значення&gt;'</code> через <code>Object.keys()</code> і <code>for...of</code>.</p></div>
-      <pre class="code">const user = {
+      <!-- 7 -->
+      <article class="task" id="t7">
+        <div class="task-head">
+          <span class="task-no">7</span>
+          <h3>Змінюємо об'єкт user і виводимо ключі</h3>
+          <div class="chips">
+            <span class="chip">obj.key = …</span
+            ><span class="chip">Object.keys</span
+            ><span class="chip">Object.entries</span
+            ><span class="chip">obj[key]</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            Для об'єкта <code>user</code>: додати <code>mood: 'happy'</code>,
+            замінити <code>hobby</code> на <code>'skydiving'</code> і
+            <code>premium</code> на <code>false</code>. Потім вивести
+            <code>'&lt;ключ&gt;:&lt;значення&gt;'</code> через
+            <code>Object.keys()</code> і <code>for...of</code>.
+          </p>
+        </div>
+        <pre class="code">
+const user = {
   name: "John",
   age: 20,
   hobby: "tenis",
@@ -300,33 +611,71 @@ for (const key of keys) {
 // те саме через entries: кожен елемент — пара [ключ, значення]
 for (const [key, value] of Object.entries(user)) {
   console.log(`${key}: ${value}`);
-}</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li>Присвоєння через крапку і додає новий ключ, і змінює наявний. <code>const</code> забороняє лише замінити весь об'єкт, але не його поля.</li>
-        <li><code>Object.keys</code> повертає масив ключів, <code>Object.values</code> масив значень, <code>Object.entries</code> масив пар <code>[ключ, значення]</code>.</li>
-        <li>Звернутись до властивості можна трьома способами: <code>user.name</code>, <code>user["name"]</code> і <code>user[key]</code>, коли ключ лежить у змінній. У циклі підходить тільки останній: <code>user.key</code> шукав би ключ з буквальною назвою <code>"key"</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls">
-          <button type="button" id="t7step">Наступний крок</button>
-          <button type="button" class="ghost" id="t7reset">Почати спочатку</button>
+}</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              Присвоєння через крапку і додає новий ключ, і змінює наявний.
+              <code>const</code> забороняє лише замінити весь об'єкт, але не
+              його поля.
+            </li>
+            <li>
+              <code>Object.keys</code> повертає масив ключів,
+              <code>Object.values</code> масив значень,
+              <code>Object.entries</code> масив пар
+              <code>[ключ, значення]</code>.
+            </li>
+            <li>
+              Звернутись до властивості можна трьома способами:
+              <code>user.name</code>, <code>user["name"]</code> і
+              <code>user[key]</code>, коли ключ лежить у змінній. У циклі
+              підходить тільки останній: <code>user.key</code> шукав би ключ з
+              буквальною назвою <code>"key"</code>.
+            </li>
+          </ul>
         </div>
-        <div class="flow" id="t7flow"></div>
-        <div class="obj" id="t7viz"></div>
-        <div class="controls">
-          <div class="field"><label for="t7key">const key =</label><input id="t7key" type="text" value="name"></div>
+        <div class="play">
+          <div class="controls">
+            <button type="button" id="t7step">Наступний крок</button>
+            <button type="button" class="ghost" id="t7reset">
+              Почати спочатку
+            </button>
+          </div>
+          <div class="flow" id="t7flow"></div>
+          <div class="obj" id="t7viz"></div>
+          <div class="controls">
+            <div class="field">
+              <label for="t7key">const key =</label
+              ><input id="t7key" type="text" value="name" />
+            </div>
+          </div>
+          <div class="steps" id="t7access"></div>
+          <div class="console" id="t7out"></div>
         </div>
-        <div class="steps" id="t7access"></div>
-        <div class="console" id="t7out"></div>
-      </div>
-    </article>
+      </article>
 
-    <!-- 8 -->
-    <article class="task" id="t8">
-      <div class="task-head"><span class="task-no">8</span><h3>Сума зарплат команди</h3>
-        <div class="chips"><span class="chip">Object.values</span><span class="chip">+=</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond">Порахувати суму всіх зарплат з об'єкта <code>salaries</code> і зберегти в <code>sum</code>. Для порожнього об'єкта результат має бути <code>0</code>.</p></div>
-      <pre class="code">const salaries = {
+      <!-- 8 -->
+      <article class="task" id="t8">
+        <div class="task-head">
+          <span class="task-no">8</span>
+          <h3>Сума зарплат команди</h3>
+          <div class="chips">
+            <span class="chip">Object.values</span><span class="chip">+=</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            Порахувати суму всіх зарплат з об'єкта <code>salaries</code> і
+            зберегти в <code>sum</code>. Для порожнього об'єкта результат має
+            бути <code>0</code>.
+          </p>
+        </div>
+        <pre class="code">
+const salaries = {
   Mango: 100,
   Poly: 160,
   Ajax: 1470,
@@ -338,30 +687,82 @@ for (const salary of Object.values(salaries)) {
   sum += salary;
 }
 
-console.log(sum); // 1730</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li>Імена тут не потрібні, тому беремо лише значення через <code>Object.values</code>.</li>
-        <li>Для порожнього об'єкта <code>Object.values({})</code> повертає <code>[]</code>, цикл не виконується жодного разу, і <code>sum</code> лишається 0.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження до коду в lesson-2.js</strong><ul>
-        <li><code>sum + -salary;</code> лише обчислює вираз і нікуди його не записує, тому <code>sum</code> лишається 0. Потрібно <code>sum += salary;</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls"><div class="field wide"><label for="t8a">salaries (ім'я: зарплата, через кому; порожньо = {})</label><input id="t8a" type="text" value="Mango: 100, Poly: 160, Ajax: 1470"></div></div>
-        <div class="steps" id="t8viz"></div>
-        <div class="split">
-          <div><p class="label">sum + -salary</p><div class="console" id="t8bad"></div></div>
-          <div><p class="label">sum += salary</p><div class="console" id="t8out"></div></div>
+console.log(sum); // 1730</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              Імена тут не потрібні, тому беремо лише значення через
+              <code>Object.values</code>.
+            </li>
+            <li>
+              Для порожнього об'єкта <code>Object.values({})</code> повертає
+              <code>[]</code>, цикл не виконується жодного разу, і
+              <code>sum</code> лишається 0.
+            </li>
+          </ul>
         </div>
-      </div>
-    </article>
+        <div class="note">
+          <strong>Зауваження до коду в lesson-2.js</strong>
+          <ul>
+            <li>
+              <code>sum + -salary;</code> лише обчислює вираз і нікуди його не
+              записує, тому <code>sum</code> лишається 0. Потрібно
+              <code>sum += salary;</code>.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field wide">
+              <label for="t8a"
+                >salaries (ім'я: зарплата, через кому; порожньо = {})</label
+              ><input
+                id="t8a"
+                type="text"
+                value="Mango: 100, Poly: 160, Ajax: 1470"
+              />
+            </div>
+          </div>
+          <div class="steps" id="t8viz"></div>
+          <div class="split">
+            <div>
+              <p class="label">sum + -salary</p>
+              <div class="console" id="t8bad"></div>
+            </div>
+            <div>
+              <p class="label">sum += salary</p>
+              <div class="console" id="t8out"></div>
+            </div>
+          </div>
+        </div>
+      </article>
 
-    <!-- 9 -->
-    <article class="task" id="t9">
-      <div class="task-head"><span class="task-no">9</span><h3>Об'єкт calculator і this</h3>
-        <div class="chips"><span class="chip">методи</span><span class="chip">this</span><span class="chip">undefined</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond">Об'єкт <code>calculator</code> з методами <code>read(a, b)</code> (зберігає аргументи у властивостях), <code>sum()</code>, <code>mult()</code> і <code>exist()</code> (перевіряє, що властивості є). Якщо їх немає, <code>sum</code> і <code>mult</code> повертають <code>'No such properties'</code>.</p></div>
-      <pre class="code">const calculator = {
+      <!-- 9 -->
+      <article class="task" id="t9">
+        <div class="task-head">
+          <span class="task-no">9</span>
+          <h3>Об'єкт calculator і this</h3>
+          <div class="chips">
+            <span class="chip">методи</span><span class="chip">this</span
+            ><span class="chip">undefined</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            Об'єкт <code>calculator</code> з методами
+            <code>read(a, b)</code> (зберігає аргументи у властивостях),
+            <code>sum()</code>, <code>mult()</code> і
+            <code>exist()</code> (перевіряє, що властивості є). Якщо їх немає,
+            <code>sum</code> і <code>mult</code> повертають
+            <code>'No such properties'</code>.
+          </p>
+        </div>
+        <pre class="code">
+const calculator = {
   read(a, b) {
     this.a = a;
     this.b = b;
@@ -386,37 +787,90 @@ console.log(sum); // 1730</pre>
 console.log(calculator.sum()); // "No such properties"
 calculator.read(5, 7);
 console.log(calculator.sum());  // 12
-console.log(calculator.mult()); // 35</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li><code>this</code> всередині методу — це об'єкт, на якому метод викликали, тобто <code>calculator</code> у <code>calculator.read(…)</code>.</li>
-        <li><code>read</code> створює властивості <code>this.a</code> і <code>this.b</code>. До першого виклику їх немає, і звернення до них дає <code>undefined</code>.</li>
-        <li>Порівняння <code>!==</code> вже повертає <code>true</code> або <code>false</code>, тому <code>? true : false</code> зайве.</li>
-      </ul></div>
-      <div class="note"><strong>Зауваження до коду в lesson-2.js</strong><ul>
-        <li>У <code>mult</code> стоїть <code>this.num1 = this.num2</code>. Це <b>присвоєння</b>, а не множення: метод повертає <code>num2</code> і ще й затирає <code>num1</code>. Потрібно <code>this.num1 * this.num2</code>.</li>
-        <li>Описка в рядку відповіді: <code>propeties</code> → <code>properties</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls">
-          <div class="field"><label for="t9a">a</label><input id="t9a" type="number" value="5"></div>
-          <div class="field"><label for="t9b">b</label><input id="t9b" type="number" value="7"></div>
-          <button type="button" id="t9read">read(a, b)</button>
-          <button type="button" class="ghost" id="t9sum">sum()</button>
-          <button type="button" class="ghost" id="t9mult">mult()</button>
-          <button type="button" class="ghost" id="t9badmult">mult() з lesson-2.js</button>
-          <button type="button" class="ghost" id="t9reset">Новий calculator</button>
+console.log(calculator.mult()); // 35</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              <code>this</code> всередині методу — це об'єкт, на якому метод
+              викликали, тобто <code>calculator</code> у
+              <code>calculator.read(…)</code>.
+            </li>
+            <li>
+              <code>read</code> створює властивості <code>this.a</code> і
+              <code>this.b</code>. До першого виклику їх немає, і звернення до
+              них дає <code>undefined</code>.
+            </li>
+            <li>
+              Порівняння <code>!==</code> вже повертає <code>true</code> або
+              <code>false</code>, тому <code>? true : false</code> зайве.
+            </li>
+          </ul>
         </div>
-        <div class="obj" id="t9viz"></div>
-        <div class="console" id="t9out"></div>
-      </div>
-    </article>
+        <div class="note">
+          <strong>Зауваження до коду в lesson-2.js</strong>
+          <ul>
+            <li>
+              У <code>mult</code> стоїть <code>this.num1 = this.num2</code>. Це
+              <b>присвоєння</b>, а не множення: метод повертає
+              <code>num2</code> і ще й затирає <code>num1</code>. Потрібно
+              <code>this.num1 * this.num2</code>.
+            </li>
+            <li>
+              Описка в рядку відповіді: <code>propeties</code> →
+              <code>properties</code>.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field">
+              <label for="t9a">a</label
+              ><input id="t9a" type="number" value="5" />
+            </div>
+            <div class="field">
+              <label for="t9b">b</label
+              ><input id="t9b" type="number" value="7" />
+            </div>
+            <button type="button" id="t9read">read(a, b)</button>
+            <button type="button" class="ghost" id="t9sum">sum()</button>
+            <button type="button" class="ghost" id="t9mult">mult()</button>
+            <button type="button" class="ghost" id="t9badmult">
+              mult() з lesson-2.js
+            </button>
+            <button type="button" class="ghost" id="t9reset">
+              Новий calculator
+            </button>
+          </div>
+          <div class="obj" id="t9viz"></div>
+          <div class="console" id="t9out"></div>
+        </div>
+      </article>
 
-    <!-- 10 -->
-    <article class="task" id="t10">
-      <div class="task-head"><span class="task-no">10</span><h3>calcTotalPrice: вартість фрукта</h3>
-        <div class="chips"><span class="chip">масив об'єктів</span><span class="chip">for...of</span><span class="chip">fruit.name</span><span class="chip file">js-inKlass/lesson-2.js</span></div></div>
-      <div><p class="label">Умова</p><p class="cond"><code>calcTotalPrice(fruits, fruitName)</code> повертає загальну вартість (<code>price × quantity</code>) усіх об'єктів з назвою <code>fruitName</code>. Об'єктів з однаковою назвою може бути кілька.</p></div>
-      <pre class="code">const fruits = [
+      <!-- 10 -->
+      <article class="task" id="t10">
+        <div class="task-head">
+          <span class="task-no">10</span>
+          <h3>calcTotalPrice: вартість фрукта</h3>
+          <div class="chips">
+            <span class="chip">масив об'єктів</span
+            ><span class="chip">for...of</span
+            ><span class="chip">fruit.name</span
+            ><span class="chip file">js-inKlass/lesson-2.js</span>
+          </div>
+        </div>
+        <div>
+          <p class="label">Умова</p>
+          <p class="cond">
+            <code>calcTotalPrice(fruits, fruitName)</code> повертає загальну
+            вартість (<code>price × quantity</code>) усіх об'єктів з назвою
+            <code>fruitName</code>. Об'єктів з однаковою назвою може бути
+            кілька.
+          </p>
+        </div>
+        <pre class="code">
+const fruits = [
   { name: "Яблуко", price: 45, quantity: 7 },
   { name: "Апельсин", price: 60, quantity: 4 },
   { name: "Банан", price: 125, quantity: 8 },
@@ -437,20 +891,47 @@ function calcTotalPrice(fruits, fruitName) {
   return totalPrice;
 }
 
-console.log(calcTotalPrice(fruits, "Банан")); // 1375</pre>
-      <div><p class="label">Як це працює</p><ul class="how">
-        <li>Кожен елемент масиву — об'єкт, тому в циклі <code>fruit</code> має поля <code>name</code>, <code>price</code> і <code>quantity</code>.</li>
-        <li>Цикл <b>не зупиняється</b> на першому збігу. Він проходить увесь масив і додає вартість кожного збігу до <code>totalPrice</code>.</li>
-      </ul></div>
-      <div class="play">
-        <div class="controls"><div class="field"><label for="t10n">fruitName</label><input id="t10n" type="text" value="Банан" list="t10list"></div>
-          <datalist id="t10list"><option value="Яблуко"></option><option value="Апельсин"></option><option value="Банан"></option><option value="Груша"></option><option value="Виноград"></option><option value="Ківі"></option></datalist></div>
-        <div class="table-wrap"><table class="data" id="t10viz"></table></div>
-        <div class="console" id="t10out"></div>
-      </div>
-    </article>
+console.log(calcTotalPrice(fruits, "Банан")); // 1375</pre
+        >
+        <div>
+          <p class="label">Як це працює</p>
+          <ul class="how">
+            <li>
+              Кожен елемент масиву — об'єкт, тому в циклі <code>fruit</code> має
+              поля <code>name</code>, <code>price</code> і
+              <code>quantity</code>.
+            </li>
+            <li>
+              Цикл <b>не зупиняється</b> на першому збігу. Він проходить увесь
+              масив і додає вартість кожного збігу до <code>totalPrice</code>.
+            </li>
+          </ul>
+        </div>
+        <div class="play">
+          <div class="controls">
+            <div class="field">
+              <label for="t10n">fruitName</label
+              ><input id="t10n" type="text" value="Банан" list="t10list" />
+            </div>
+            <datalist id="t10list">
+              <option value="Яблуко"></option>
+              <option value="Апельсин"></option>
+              <option value="Банан"></option>
+              <option value="Груша"></option>
+              <option value="Виноград"></option>
+              <option value="Ківі"></option>
+            </datalist>
+          </div>
+          <div class="table-wrap"><table class="data" id="t10viz"></table></div>
+          <div class="console" id="t10out"></div>
+        </div>
+      </article>
 
-    <footer>Пісочниці перераховують результат при кожній зміні поля. Код у блоках виправлений і відповідає умовам; зауваження стосуються версії в js-inKlass/lesson-2.js.</footer>
-  </main>
+      <footer>
+        Пісочниці перераховують результат при кожній зміні поля. Код у блоках
+        виправлений і відповідає умовам; зауваження стосуються версії в
+        js-inKlass/lesson-2.js.
+      </footer>
+    </main>
   </body>
 </html>

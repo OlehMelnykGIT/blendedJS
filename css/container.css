@@ -327,3 +327,48 @@ footer::before {
   color: var(--muted);
   font-size: 14px;
 }
+
+/* ---------- Код, який можна запустити (data-run) ---------- */
+
+pre.code[data-run] {
+  cursor: text;
+  border: 1px solid transparent;
+}
+
+pre.code[data-run]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.runner {
+  display: grid;
+  gap: 10px;
+  margin-top: -8px;
+}
+
+.runner .controls {
+  gap: 8px;
+}
+
+.runner button {
+  padding: 6px 12px;
+}
+
+/* ---------- Пісочниця для DOM-задач (data-run="sandbox") ---------- */
+
+.sandbox {
+  height: 400px;
+  min-height: 160px;
+  resize: vertical;
+  overflow: hidden;
+  border: 1px dashed var(--accent);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.sandbox iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}

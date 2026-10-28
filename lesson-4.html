@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Blended JS · Заняття 4</title>
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/konspekt.js"></script>
+  </head>
+  <body>
+    <main
+      data-lesson="4"
+      data-title="Взаємодія з DOM-елементами"
+      data-file="js-inKlass/lesson-4.js"
+      data-sandbox="lesson-4-practice.html"
+    >
+      <p class="lede">
+        Пошук елементів, зміна тексту, класів, стилів і атрибутів, створення й видалення елементів, події форми
+        (<code>input</code>, <code>focus</code>, <code>blur</code>, <code>submit</code>) і <code>click</code>. Код
+        кожного блоку виконується на сторінці-пісочниці з ТЗ, яку видно під ним. Кожен запуск починається з чистої
+        сторінки.
+      </p>
+
+      <!-- ===================== Шпаргалка ===================== -->
+      <article class="task" id="cheat" data-no="★" data-title="Шпаргалка: основні методи DOM" data-file="">
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Що треба</th><th>Метод / властивість</th><th>Повертає</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Один елемент за CSS-селектором</td><td><code>querySelector(sel)</code></td><td>перший елемент або <code>null</code></td></tr>
+              <tr><td>Усі елементи за селектором</td><td><code>querySelectorAll(sel)</code></td><td><code>NodeList</code> (є <code>forEach</code>)</td></tr>
+              <tr><td>Сусід / батько / діти</td><td><code>nextElementSibling</code>, <code>parentElement</code>, <code>children</code></td><td>елемент / колекцію</td></tr>
+              <tr><td>Найближчий предок за селектором</td><td><code>closest(sel)</code></td><td>елемент або <code>null</code></td></tr>
+              <tr><td>Текст</td><td><code>textContent</code></td><td>рядок</td></tr>
+              <tr><td>Класи</td><td><code>classList.add / remove / toggle / contains</code></td><td>—</td></tr>
+              <tr><td>Інлайн-стиль</td><td><code>style.backgroundColor = "..."</code></td><td>—</td></tr>
+              <tr><td>Атрибути</td><td><code>getAttribute</code>, <code>setAttribute</code>, <code>dataset.topic</code></td><td>рядок</td></tr>
+              <tr><td>Створити елемент</td><td><code>document.createElement("li")</code></td><td>новий елемент (ще не на сторінці)</td></tr>
+              <tr><td>Вставити елемент</td><td><code>append</code>, <code>prepend</code>, <code>before</code>, <code>after</code></td><td>—</td></tr>
+              <tr><td>Вставити рядок розмітки</td><td><code>insertAdjacentHTML(position, html)</code></td><td>—</td></tr>
+              <tr><td>Видалити</td><td><code>el.remove()</code>, <code>el.innerHTML = ""</code></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="how">
+          <li>
+            Позиції для <code>insertAdjacentHTML</code>: <code>"beforebegin"</code> (перед елементом),
+            <code>"afterbegin"</code> (першим усередині), <code>"beforeend"</code> (останнім усередині),
+            <code>"afterend"</code> (після елемента).
+          </li>
+          <li>
+            <code>event.target</code> — елемент, на якому сталася подія (куди клікнули).
+            <code>event.currentTarget</code> — елемент, на якому висить обробник.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Завдання 1 ===================== -->
+      <h2 class="part-title">Завдання 1. Базові операції з DOM</h2>
+
+      <article class="task" data-no="1.1" data-title="Пошук елементів (кроки 1–8)" data-chips="querySelector, querySelectorAll, nextElementSibling">
+        <div class="cond">
+          <ol>
+            <li>Отримай <code>body</code> і виведи в консоль.</li>
+            <li>Отримай елемент <code>id="title"</code>.</li>
+            <li>Отримай елемент <code>class="list"</code>.</li>
+            <li>Отримай всі елементи з атрибутом <code>data-topic</code>.</li>
+            <li>Отримай перший з них.</li>
+            <li>Отримай останній з них.</li>
+            <li>Який елемент є сусідом для <code>h1</code>? Знайди і виведи його.</li>
+            <li>Знайди всі заголовки <code>h3</code>.</li>
+          </ol>
+        </div>
+        <script type="text/plain" class="code" data-run="sandbox">
+          // 1
+          const body = document.body;
+          console.log(body);
+
+          // 2
+          const title = document.querySelector("#title"); // або document.getElementById("title")
+          console.log(title);
+
+          // 3
+          const list = document.querySelector(".list");
+          console.log(list);
+
+          // 4
+          const topics = document.querySelectorAll("[data-topic]");
+          console.log(topics);
+
+          // 5
+          console.log(topics[0]);
+
+          // 6
+          console.log(topics[topics.length - 1]);
+
+          // 7
+          console.log(title.nextElementSibling);
+
+          // 8
+          const titles = document.querySelectorAll("h3");
+          console.log(titles);
+        </script>
+        <ul class="how">
+          <li>
+            <code>querySelector</code> приймає будь-який CSS-селектор: <code>"#id"</code>, <code>".class"</code>,
+            <code>"[data-topic]"</code>. Повертає <b>перший</b> знайдений елемент або <code>null</code>.
+          </li>
+          <li>
+            <code>querySelectorAll</code> повертає <code>NodeList</code>. Він схожий на масив: є індекси,
+            <code>length</code> і <code>forEach</code>, але немає <code>map</code> чи <code>filter</code>.
+          </li>
+          <li>
+            Сусід <code>h1</code> — це <code>ul.list</code>. <code>nextElementSibling</code> бере наступний
+            <b>елемент</b>. <code>nextSibling</code> повернув би текстовий вузол із переносом рядка.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="1.2" data-title="Класи, стилі й атрибути (кроки 9–14)" data-chips="classList, style, [data-*], шаблонний рядок">
+        <div class="cond">
+          <ol start="9">
+            <li>Кожному <code>h3</code> додай <code>class="active"</code> (червоний колір).</li>
+            <li>Знайди <code>li</code> з <code>data-topic="navigation"</code>.</li>
+            <li>Зроби йому жовтий <code>backgroundColor</code>.</li>
+            <li>Зміни текст його <code>p</code> на «Я змінив тут текст!».</li>
+            <li>
+              Створи <code>const currentTopic = "manipulation"</code> і знайди елемент, у якого
+              <code>data-topic</code> дорівнює цій змінній.
+            </li>
+            <li>Зроби йому блакитний <code>backgroundColor</code>.</li>
+          </ol>
+        </div>
+        <script type="text/plain" class="code" data-run="sandbox">
+          // 9
+          const titles = document.querySelectorAll("h3");
+          titles.forEach((title) => title.classList.add("active"));
+
+          // 10
+          const navItem = document.querySelector('[data-topic="navigation"]');
+          console.log(navItem);
+
+          // 11
+          navItem.style.backgroundColor = "yellow";
+
+          // 12
+          navItem.querySelector("p").textContent = "Я змінив тут текст!";
+
+          // 13
+          const currentTopic = "manipulation";
+          const currentItem = document.querySelector(`[data-topic="${currentTopic}"]`);
+          console.log(currentItem);
+
+          // 14
+          currentItem.style.backgroundColor = "lightblue";
+        </script>
+        <ul class="how">
+          <li>
+            <code>classList.add</code> не стирає наявні класи. Тому <code>h3.completed</code> після кроку 9 має
+            обидва: <code>class="completed active"</code>.
+          </li>
+          <li>
+            Селектор за значенням атрибута: <code>[data-topic="navigation"]</code>. Якщо значення лежить у змінній,
+            підставляємо його шаблонним рядком: <code>`[data-topic="${currentTopic}"]`</code>.
+          </li>
+          <li>
+            <code>el.style.backgroundColor = "yellow"</code> сам додає елементу атрибут
+            <code>style="background-color: yellow;"</code>. Те саме вручну:
+            <code>el.setAttribute("style", "background-color: yellow")</code>, але так зітруться інші інлайн-стилі.
+          </li>
+          <li>
+            <code>querySelector</code> можна викликати не тільки на <code>document</code>, а й на будь-якому
+            елементі. Тоді пошук іде тільки всередині нього (крок 12).
+          </li>
+        </ul>
+        <div class="note" data-label="Про CSS">
+          <ul><li>У стилях із ТЗ не було класу <code>.active</code>. Я додав його в <code>css/lesson-4.css</code>: <code>.active { color: red; }</code>.</li></ul>
+        </div>
+      </article>
+
+      <article class="task" data-no="1.3" data-title="Видалення елемента (кроки 15–16)" data-chips="closest, remove">
+        <div class="cond">
+          <ol start="15">
+            <li>Знайди заголовок із <code>class="completed"</code>.</li>
+            <li>Видали <code>li</code>, у якому він знаходиться.</li>
+          </ol>
+        </div>
+        <script type="text/plain" class="code" data-run="sandbox">
+          // 15
+          const completedTitle = document.querySelector(".completed");
+          console.log(completedTitle);
+
+          // 16
+          completedTitle.closest("li").remove(); // або completedTitle.parentElement.remove()
+          console.log(document.querySelectorAll(".list li"));
+        </script>
+        <ul class="how">
+          <li>
+            <code>closest("li")</code> іде вгору по предках і повертає перший <code>li</code>. На відміну від
+            <code>parentElement</code>, він не зламається, якщо заголовок пізніше загорнуть ще в один
+            <code>div</code>.
+          </li>
+          <li><code>remove()</code> прибирає елемент з DOM разом з усім його вмістом.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="1.4" data-title="Створення елементів: createElement (кроки 17–18)" data-chips="createElement, after, append">
+        <div class="cond">
+          <ol start="17">
+            <li>Після <code>h1</code> (перед списком) додай <code>p</code> з текстом «Об'єктна модель документа (Document Object Model)».</li>
+            <li>
+              Створи новий <code>li</code> з <code>h3</code> «Властивість innerHTML» і <code>p</code> з описом та додай
+              його в кінець списку.
+            </li>
+          </ol>
+        </div>
+        <script type="text/plain" class="code" data-run="sandbox">
+          const title = document.querySelector("#title");
+          const list = document.querySelector(".list");
+
+          // 17
+          const subtitle = document.createElement("p");
+          subtitle.textContent = "Об'єктна модель документа (Document Object Model)";
+          title.after(subtitle); // або list.before(subtitle)
+
+          // 18
+          const item = document.createElement("li");
+
+          const itemTitle = document.createElement("h3");
+          itemTitle.textContent = "Властивість innerHTML";
+
+          const itemText = document.createElement("p");
+          itemText.textContent =
+            "Ще один спосіб створити DOM-елементи і помістити їх в дерево - це використовувати рядки з тегами і дозволити браузеру зробити всю важку роботу";
+
+          item.append(itemTitle, itemText);
+          list.append(item);
+
+          console.log(list.lastElementChild);
+        </script>
+        <ul class="how">
+          <li>
+            <code>createElement</code> створює елемент <b>у пам'яті</b>. На сторінці він з'явиться тільки після
+            вставки: <code>append</code>, <code>prepend</code>, <code>before</code> або <code>after</code>.
+          </li>
+          <li>
+            Спершу збираємо <code>li</code> повністю (<code>h3</code> і <code>p</code> всередині), а потім вставляємо
+            його одним <code>append</code>. Так сторінка перемальовується один раз.
+          </li>
+          <li><code>append</code> приймає кілька елементів одразу: <code>item.append(itemTitle, itemText)</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="1.5" data-title="Те саме рядком: insertAdjacentHTML (крок 19)" data-chips="insertAdjacentHTML, шаблонний рядок">
+        <p class="cond">Додай такий самий <code>li</code> у кінець списку, але через шаблонний рядок і <code>insertAdjacentHTML()</code>.</p>
+        <script type="text/plain" class="code" data-run="sandbox">
+          const list = document.querySelector(".list");
+
+          const markup = `
+            <li>
+              <h3>Властивість innerHTML</h3>
+              <p>
+                Ще один спосіб створити DOM-елементи і помістити їх в дерево - це використовувати
+                рядки з тегами і дозволити браузеру зробити всю важку роботу
+              </p>
+            </li>`;
+
+          list.insertAdjacentHTML("beforeend", markup);
+          console.log(list.lastElementChild);
+        </script>
+        <ul class="how">
+          <li>Браузер сам розбирає рядок і створює з нього елементи.</li>
+          <li><code>"beforeend"</code> означає «останнім усередині <code>list</code>», як <code>append</code>.</li>
+          <li>
+            На відміну від <code>list.innerHTML += markup</code>, <code>insertAdjacentHTML</code> не перестворює
+            наявні елементи. Тому їхні обробники подій і стан не губляться.
+          </li>
+        </ul>
+        <div class="note" data-label="Обережно">
+          <ul><li>Не вставляй так текст, який ввів користувач: теги з нього теж виконаються. Для тексту є <code>textContent</code>.</li></ul>
+        </div>
+      </article>
+
+      <article class="task" data-no="1.6" data-title="Очистити список (крок 20)" data-chips="innerHTML, replaceChildren">
+        <p class="cond">Очисти список.</p>
+        <script type="text/plain" class="code" data-run="sandbox">
+          const list = document.querySelector(".list");
+
+          list.innerHTML = ""; // або list.replaceChildren()
+          console.log(list.children.length); // 0
+        </script>
+        <ul class="how">
+          <li>Порожній рядок у <code>innerHTML</code> прибирає всіх дітей, а сам <code>ul</code> лишається на сторінці.</li>
+          <li><code>list.remove()</code> видалив би весь список разом з <code>ul</code>, а це вже інше.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Завдання 2 ===================== -->
+      <h2 class="part-title">Завдання 2. 100 випадкових чисел</h2>
+
+      <article class="task" data-no="2.1" data-title="Блоки через createElement" data-chips="for, createElement, classList, append(...)">
+        <p class="cond">
+          У <code>div.number-container</code> додай 100 блоків <code>div.number</code> з випадковими числами від 1 до
+          100. Парні отримують клас <code>even</code> (зелений), непарні — <code>odd</code> (жовтий).
+        </p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".number-container">
+          const randomNumber = () => Math.floor(Math.random() * 100) + 1;
+
+          const numberContainer = document.querySelector(".number-container");
+          const items = [];
+
+          for (let i = 0; i < 100; i += 1) {
+            const number = randomNumber();
+            const item = document.createElement("div");
+            item.classList.add("number", number % 2 === 0 ? "even" : "odd");
+            item.textContent = number;
+            items.push(item);
+          }
+
+          numberContainer.append(...items);
+          console.log(numberContainer.children.length); // 100
+        </script>
+        <ul class="how">
+          <li><code>Math.random()</code> дає число від 0 до 1 (не включно), <code>* 100</code> — від 0 до 99.99…, <code>Math.floor</code> — 0…99, <code>+ 1</code> — 1…100.</li>
+          <li><code>number % 2 === 0</code> перевіряє, чи число парне. Тернарний оператор обирає клас.</li>
+          <li>
+            Блоки спершу збираємо в масив, а потім вставляємо одним <code>append(...items)</code>. Так браузер
+            перемальовує сторінку один раз, а не сто.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="2.2" data-title="Варіант: рядок розмітки" data-chips="Array.from, map, join, insertAdjacentHTML">
+        <p class="cond">Те саме, але розмітку збираємо рядком і вставляємо одним <code>insertAdjacentHTML</code>.</p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".number-container">
+          const randomNumber = () => Math.floor(Math.random() * 100) + 1;
+
+          const numberContainer = document.querySelector(".number-container");
+
+          const markup = Array.from({ length: 100 }, () => {
+            const number = randomNumber();
+            const type = number % 2 === 0 ? "even" : "odd";
+            return `<div class="number ${type}">${number}</div>`;
+          }).join("");
+
+          numberContainer.insertAdjacentHTML("beforeend", markup);
+        </script>
+        <ul class="how">
+          <li><code>Array.from({ length: 100 }, fn)</code> створює масив зі 100 елементів, кожен з яких повертає <code>fn</code>.</li>
+          <li><code>join("")</code> склеює масив рядків в один рядок без ком між ними.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Завдання 3 ===================== -->
+      <h2 class="part-title">Завдання 3. Події форми</h2>
+
+      <article class="task" data-no="3.1" data-title="input: success / error" data-chips="input, classList.toggle">
+        <p class="cond">
+          При події <code>input</code>: якщо в полі більше 6 символів, додай клас <code>success</code>, інакше
+          <code>error</code>.
+        </p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".contact-form">
+          const input = document.querySelector(".js-username-input");
+
+          input.addEventListener("input", (event) => {
+            const isValid = event.currentTarget.value.trim().length > 6;
+            input.classList.toggle("success", isValid);
+            input.classList.toggle("error", !isValid);
+          });
+
+          console.log("Почни вводити ім'я в поле нижче");
+        </script>
+        <ul class="how">
+          <li>Подія <code>input</code> спрацьовує на кожен введений або видалений символ.</li>
+          <li>
+            <code>classList.toggle(name, condition)</code> додає клас, якщо умова <code>true</code>, і прибирає,
+            якщо <code>false</code>. Тому одночасно ніколи не буде обох класів.
+          </li>
+          <li><code>trim()</code> обрізає пробіли з країв, щоб «       » не вважалось іменем.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="3.2" data-title="focus і blur: рамка за станом поля" data-chips="focus, blur, style.outline">
+        <p class="cond">
+          При <code>focus</code> і при <code>blur</code> перевір, чи поле порожнє. Порожнє: <code>outline</code>
+          <code>3px solid red</code>. Непорожнє: <code>3px solid green</code> при фокусі й
+          <code>3px solid lime</code> при blur.
+        </p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".contact-form">
+          const input = document.querySelector(".js-username-input");
+
+          input.addEventListener("focus", () => {
+            input.style.outline = input.value.trim() === "" ? "3px solid red" : "3px solid green";
+          });
+
+          input.addEventListener("blur", () => {
+            input.style.outline = input.value.trim() === "" ? "3px solid red" : "3px solid lime";
+          });
+
+          console.log("Клікни в поле, а потім поза ним");
+        </script>
+        <ul class="how">
+          <li><code>focus</code> — поле стало активним (клік або Tab). <code>blur</code> — поле втратило фокус.</li>
+          <li>Ці події не спливають. Тому обробник вішаємо прямо на <code>input</code>, а не на форму.</li>
+        </ul>
+        <div class="note" data-label="Якщо поєднати з 3.1">
+          <ul>
+            <li>
+              Інлайн-стиль <code>style.outline</code> сильніший за клас. Після першого фокусу класи
+              <code>success</code>/<code>error</code> з 3.1 вже не буде видно. Тому кожен блок тут запускається
+              на чистій сторінці окремо.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-no="3.3" data-title="submit: перевірка, об'єкт, скидання форми" data-chips="submit, preventDefault, elements, reset">
+        <div class="cond">
+          <ul>
+            <li>При <code>input</code> показуй ім'я в <code>span</code> замість «Anonymous». Якщо поле порожнє, повертай «Anonymous».</li>
+            <li>
+              При <code>submit</code> відміни перезавантаження. Перевір, що ім'я не порожнє і чекбокс увімкнений.
+              Якщо все добре, виведи <code>{ userName }</code> у консоль, інакше покажи повідомлення.
+            </li>
+            <li>Після відправки очисти поле, вимкни чекбокс і поверни «Anonymous».</li>
+          </ul>
+        </div>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".contact-form">
+          const DEFAULT_NAME = "Anonymous";
+
+          const form = document.querySelector(".js-contact-form");
+          const input = document.querySelector(".js-username-input");
+          const output = document.querySelector(".js-username-output");
+
+          input.addEventListener("input", (event) => {
+            output.textContent = event.currentTarget.value.trim() || DEFAULT_NAME;
+          });
+
+          form.addEventListener("submit", (event) => {
+            event.preventDefault();
+
+            const { userName, accept } = event.currentTarget.elements;
+            const name = userName.value.trim();
+
+            if (!name || !accept.checked) {
+              alert("Введіть ім'я і погодьтесь із політикою конфіденційності");
+              return;
+            }
+
+            const data = { userName: name };
+            console.log(data);
+
+            form.reset();
+            output.textContent = DEFAULT_NAME;
+          });
+
+          console.log("Заповни форму нижче й натисни «Відправити»");
+        </script>
+        <ul class="how">
+          <li><code>event.preventDefault()</code> скасовує стандартну поведінку: відправку форми з перезавантаженням сторінки.</li>
+          <li>
+            <code>form.elements</code> містить поля форми за їхнім <code>name</code>: <code>userName</code> і
+            <code>accept</code>. Значення поля — <code>.value</code>, стан чекбокса — <code>.checked</code>.
+          </li>
+          <li><code>value.trim() || DEFAULT_NAME</code>: порожній рядок хибний, тому підставляється «Anonymous».</li>
+          <li><code>form.reset()</code> одним викликом очищає всі поля і знімає галочку з чекбокса. <code>span</code> не є полем форми, тому його повертаємо вручну.</li>
+          <li><code>return</code> у гілці помилки зупиняє обробник, щоб далі не виконувалось виведення й скидання.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Завдання 4 ===================== -->
+      <h2 class="part-title">Завдання 4. Квадрат: більше / менше</h2>
+
+      <article class="task" data-no="4.1" data-title="Два обробники click" data-chips="click, style.width, offsetWidth">
+        <p class="cond">«Зменшити» робить квадрат на 20px меншим, «Збільшити» — на 20px більшим.</p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".box">
+          const STEP = 20;
+
+          const box = document.querySelector(".box");
+          const decreaseBtn = document.querySelector("#decrease");
+          const increaseBtn = document.querySelector("#increase");
+
+          let size = box.offsetWidth; // 50
+
+          const setSize = (newSize) => {
+            size = Math.max(newSize, STEP); // не менше 20px, щоб квадрат не зник
+            box.style.width = `${size}px`;
+            box.style.height = `${size}px`;
+            console.log(size);
+          };
+
+          decreaseBtn.addEventListener("click", () => setSize(size - STEP));
+          increaseBtn.addEventListener("click", () => setSize(size + STEP));
+        </script>
+        <ul class="how">
+          <li>
+            <code>offsetWidth</code> — реальна ширина елемента в пікселях (число). <code>box.style.width</code>
+            спочатку порожній, бо в HTML немає інлайн-стилю: ширина задана в CSS.
+          </li>
+          <li>Поточний розмір тримаємо в змінній <code>size</code>, щоб не читати його зі сторінки щоразу.</li>
+          <li>Значення <code>style.width</code> — рядок з одиницями: <code>`${size}px`</code>. Просто число не спрацює.</li>
+          <li><code>Math.max(newSize, STEP)</code> не дає розміру стати від'ємним.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-no="4.2" data-title="Варіант: делегування подій" data-chips="делегування, event.target, closest">
+        <p class="cond">Те саме з одним обробником на спільному батьківському <code>div</code>.</p>
+        <script type="text/plain" class="code" data-run="sandbox" data-focus=".box">
+          const STEP = 20;
+
+          const box = document.querySelector(".box");
+          const controls = box.parentElement;
+          let size = box.offsetWidth;
+
+          controls.addEventListener("click", (event) => {
+            const button = event.target.closest("button");
+            if (!button) return; // клік не по кнопці
+
+            size += button.id === "increase" ? STEP : -STEP;
+            size = Math.max(size, STEP);
+
+            box.style.width = `${size}px`;
+            box.style.height = `${size}px`;
+            console.log(button.id, size);
+          });
+        </script>
+        <ul class="how">
+          <li>
+            Клік по кнопці <b>спливає</b> до батьків. Тому один обробник на <code>div</code> ловить кліки обох
+            кнопок.
+          </li>
+          <li><code>event.target</code> — те, по чому клікнули. За <code>id</code> кнопки визначаємо, що робити.</li>
+          <li>Зручно, коли кнопок багато або їх додають динамічно: обробник потрібен один, а не на кожну кнопку.</li>
+        </ul>
+      </article>
+    </main>
+  </body>
+</html>

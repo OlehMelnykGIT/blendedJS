@@ -3,9 +3,11 @@
 
 // --- підсвічування коду в <pre class="code"> ---
 export const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-const RE = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|\b(function|return|if|else|switch|case|break|default|const|let|for|while|typeof|true|false|null)\b|\b(\d+)\b|\b([A-Za-z_]\w*)(?=\()/gm;
-export function highlightCode() {
-  document.querySelectorAll("pre.code").forEach((pre) => {
+const RE = /(\/\/.*$|\/\*[\s\S]*?\*\/)|("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`)|\b(function|return|if|else|switch|case|break|default|const|let|for|of|while|typeof|true|false|null|undefined|class|extends|new|this|super|throw|static)\b|\b(\d+)\b|\b([A-Za-z_]\w*)(?=\()/gm;
+// Без аргументу підсвічує всі блоки на сторінці, з аргументом — лише один <pre>
+export function highlightCode(target) {
+  const blocks = target ? [target] : document.querySelectorAll("pre.code");
+  blocks.forEach((pre) => {
     const src = pre.textContent;
     let out = "", last = 0;
     src.replace(RE, (m, c, s, k, n, f, i) => {

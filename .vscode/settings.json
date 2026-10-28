@@ -1,0 +1,8 @@
+{
+  // Live Server: чекати 400 мс після збереження (Prettier + ESLint зберігають файл двічі)
+  "liveServer.settings.wait": 400,
+  // Не перезавантажувати сторінку через службові файли
+  "liveServer.settings.ignoreFiles": [".git/**", ".vscode/**", "**/.DS_Store", "**/*.md", "**/*.scss", "lesson-5-vite/**"],
+  // Зміни CSS підставляти без повного перезавантаження
+  "liveServer.settings.fullReload": false
+}

@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Blended JS · Заняття 5</title>
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/konspekt.js"></script>
+  </head>
+  <body>
+    <main
+      data-lesson="5"
+      data-title="Модулі, localStorage і список справ на Vite"
+      data-file="lesson-5-vite/src/"
+      data-sandbox="lesson-5-practice.html"
+    >
+      <p class="lede">
+        Список справ: форма додає картку, кнопка «Delete» її прибирає, список і тема переживають перезавантаження
+        сторінки. Код розбитий на модулі (<code>import</code> / <code>export</code>), проєкт збирає Vite. Сам
+        застосунок запускається з папки <code>lesson-5-vite</code> командою <code>npm run dev</code>. Тут код кожного
+        модуля з поясненнями, а в кінці весь застосунок одним блоком, який можна запустити в пісочниці.
+      </p>
+
+      <!-- ===================== Шпаргалка ===================== -->
+      <article class="task" id="cheat" data-no="★" data-title="Шпаргалка: модулі та localStorage" data-file="">
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Що треба</th><th>Як</th><th>Примітка</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Експорт з модуля</td><td><code>export function f() {}</code>, <code>export const X = 1</code></td><td>іменований експорт</td></tr>
+              <tr><td>Імпорт</td><td><code>import { f, X } from './js/file'</code></td><td>імена в <code>{}</code> мають збігатися</td></tr>
+              <tr><td>Імпорт пакета з npm</td><td><code>import izitoast from 'izitoast'</code></td><td>default-експорт, ім'я будь-яке</td></tr>
+              <tr><td>Імпорт CSS пакета</td><td><code>import 'izitoast/dist/css/iziToast.min.css'</code></td><td>працює завдяки Vite</td></tr>
+              <tr><td>Зберегти</td><td><code>localStorage.setItem(key, JSON.stringify(value))</code></td><td>зберігає тільки рядки</td></tr>
+              <tr><td>Прочитати</td><td><code>JSON.parse(localStorage.getItem(key))</code></td><td>немає ключа → <code>null</code></td></tr>
+              <tr><td>Видалити</td><td><code>localStorage.removeItem(key)</code>, <code>localStorage.clear()</code></td><td>—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="how">
+          <li>
+            Модуль — окремий файл зі своєю областю видимості. Назовні видно тільки те, що має <code>export</code>.
+          </li>
+          <li>
+            Код модуля виконується один раз, при першому імпорті. Тому <code>let tasks</code> у
+            <code>tasks.js</code> один на весь застосунок: усі функції цього файлу працюють з тим самим масивом.
+          </li>
+          <li>
+            Розширення <code>.js</code> в імпорті можна не писати: Vite знайде файл сам. Без збирача (просто
+            <code>&lt;script type="module"&gt;</code>) розширення обов'язкове.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Модулі ===================== -->
+      <h2 class="part-title">Допоміжні модулі</h2>
+
+      <article class="task" data-title="Посилання на елементи" data-chips="export, querySelector" data-file="js/refs.js">
+        <p class="cond">Зібрати всі потрібні DOM-елементи в один об'єкт <code>refs</code>.</p>
+        <script type="text/plain" class="code">
+          export const refs = {
+            form: document.querySelector('.header-form'),
+            task: document.querySelector('#task-list'),
+            themeBtn: document.querySelector('#themeToggle'),
+          };
+        </script>
+        <ul class="how">
+          <li>
+            Елементи шукаються один раз, коли модуль імпортують уперше. Далі будь-який файл бере їх через
+            <code>import { refs } from './refs'</code>.
+          </li>
+          <li>
+            Скрипт підключено як <code>type="module"</code>, а такі скрипти виконуються після розбору HTML. Тому
+            елементи вже є на сторінці.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Робота з localStorage" data-chips="JSON.stringify, JSON.parse" data-file="js/local-storage-api.js">
+        <p class="cond">Функції для збереження й читання даних. Ключі — константами.</p>
+        <script type="text/plain" class="code">
+          export const TASK_LS_KEY = 'tasks';
+          export const THEMA_LS_KEY = 'theme';
+
+          export function saveInLS(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+          }
+
+          export function getFromLs(key) {
+            const storageData = localStorage.getItem(key);
+            if (!storageData) {
+              return null;
+            }
+            return JSON.parse(storageData);
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>localStorage</code> зберігає тільки рядки. Масив об'єктів перетворюємо на JSON-рядок перед
+            записом і назад після читання.
+          </li>
+          <li>
+            Якщо ключа немає, <code>getItem</code> повертає <code>null</code>. Функція одразу його повертає, і в
+            <code>tasks.js</code> спрацьовує <code>|| []</code>.
+          </li>
+          <li>Ключі в константах: одна помилка в рядку <code>'taks'</code> — і дані «зникли». З константою такого не буде.</li>
+        </ul>
+        <div class="note" data-label="Можна покращити">
+          <ul>
+            <li>
+              Якщо в сховищі лежить зіпсований рядок (не JSON), <code>JSON.parse</code> кине помилку, і застосунок не
+              запуститься. Захист: обгорнути в <code>try { … } catch { return null; }</code>.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Рендер списку" data-chips="map, join, innerHTML" data-file="js/render-tasks.js">
+        <p class="cond">Намалювати картки для всього масиву задач.</p>
+        <script type="text/plain" class="code">
+          import { refs } from './refs';
+
+          export function renderTasks(array) {
+            const markup = array
+              .map(
+                elemet =>
+                  `<li class="task-list-item">
+                  <button class="task-list-item-btn">Delete</button>
+                  <h3>${elemet.title}</h3>
+                  <p>${elemet.descr}</p>
+                </li>`
+              )
+              .join('');
+
+            refs.task.innerHTML = markup;
+          }
+        </script>
+        <ul class="how">
+          <li><code>map</code> робить з кожної задачі рядок розмітки, <code>join('')</code> склеює їх в один.</li>
+          <li>
+            <code>innerHTML =</code> замінює весь вміст списку. Тому після будь-якої зміни масиву викликаємо
+            <code>renderTasks(tasks)</code>, і сторінка завжди збігається з даними.
+          </li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>
+              За ТЗ розмітка мала бути в <code>markup-tasks.js</code>, а він порожній. Можна винести туди
+              <code>createMarkup(array)</code>, яка повертає рядок, а в <code>render-tasks.js</code> лишити тільки
+              <code>refs.task.innerHTML = createMarkup(array)</code>.
+            </li>
+            <li>Одруківка: <code>elemet</code> → <code>element</code> (або просто <code>task</code>).</li>
+            <li>
+              Текст від користувача потрапляє в <code>innerHTML</code>. Якщо ввести в назву
+              <code>&lt;img src=x onerror=alert(1)&gt;</code>, код виконається. Для навчального проєкту нормально,
+              але в реальному треба екранувати текст або ставити його через <code>textContent</code>.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ===================== Задачі ===================== -->
+      <h2 class="part-title">Логіка задач</h2>
+
+      <article class="task" data-title="Додати задачу" data-chips="submit, elements, some, reset" data-file="js/tasks.js">
+        <p class="cond">
+          Після «Add» задача додається до списку й у <code>localStorage</code>. Порожні поля й повтор назви не
+          пропускаємо, поля після додавання очищаємо.
+        </p>
+        <script type="text/plain" class="code">
+          import izitoast from 'izitoast';
+          import 'izitoast/dist/css/iziToast.min.css';
+          import { renderTasks } from './render-tasks';
+          import { getFromLs, saveInLS, TASK_LS_KEY } from './local-storage-api';
+
+          let tasks = getFromLs(TASK_LS_KEY) || [];
+
+          export function addTask(event) {
+            event.preventDefault();
+            const title = event.target.elements.taskName.value.trim();
+            const descr = event.target.elements.taskDescription.value.trim();
+
+            if (title === '' || descr === '') {
+              izitoast.warning({ message: 'Заповніть всі поля !' });
+              return;
+            }
+
+            // Перевірка на унікальний title: deleteTask видаляє за title,
+            // тому дві задачі з однаковою назвою видалились би разом
+            const isDuplicate = tasks.some(
+              el => el.title.toLowerCase() === title.toLowerCase()
+            );
+            if (isDuplicate) {
+              izitoast.warning({ message: 'Задача з такою назвою вже є !' });
+              return;
+            }
+
+            const task = { title, descr };
+            tasks.push(task);
+            renderTasks(tasks);
+            saveInLS(TASK_LS_KEY, tasks);
+
+            event.target.reset();
+          }
+
+          export function initTasks() {
+            renderTasks(tasks);
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>getFromLs(...) || []</code>: якщо в сховищі нічого немає (<code>null</code>), починаємо з порожнього
+            масиву. Це заміна закоментованого <code>if / else</code>.
+          </li>
+          <li>
+            <code>event.target.elements.taskName</code> — поле форми за атрибутом <code>name</code>.
+            <code>trim()</code> прибирає пробіли, щоб назва з одних пробілів вважалась порожньою.
+          </li>
+          <li>
+            <code>some</code> повертає <code>true</code>, щойно знайде хоч одну задачу з такою назвою. Порівнюємо
+            через <code>toLowerCase()</code>, тож «Купити» і «купити» — теж повтор.
+          </li>
+          <li>
+            Порядок завжди однаковий: змінили масив → <code>renderTasks</code> → <code>saveInLS</code>.
+          </li>
+          <li><code>event.target.reset()</code> очищає всі поля форми.</li>
+        </ul>
+        <div class="note" data-label="Чому видалялись усі однакові">
+          <ul>
+            <li>
+              <code>deleteTask</code> шукає задачу за назвою: <code>tasks.filter(el =&gt; el.title !== h3Value)</code>.
+              Фільтр прибирає <b>кожну</b> задачу з такою назвою. Якщо назви унікальні, такого вже не буде.
+            </li>
+            <li>
+              Задачі, що вже лежать у <code>localStorage</code> з однаковими назвами, перевірка не прибере. Видали їх
+              один раз (DevTools → Application → Local Storage) або натисни Delete.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Видалити задачу" data-chips="делегування, classList.contains, filter" data-file="js/tasks.js">
+        <p class="cond">Кнопка «Delete» прибирає свою картку зі списку і з <code>localStorage</code>.</p>
+        <script type="text/plain" class="code">
+          export function deleteTask(evt) {
+            if (!evt.target.classList.contains('task-list-item-btn')) {
+              return;
+            }
+
+            const h3Value = evt.target.nextElementSibling.textContent;
+            tasks = tasks.filter(el => el.title !== h3Value);
+            renderTasks(tasks);
+            saveInLS(TASK_LS_KEY, tasks);
+          }
+        </script>
+        <ul class="how">
+          <li>
+            Обробник висить на всьому <code>#task-list</code> (делегування). Картки перемальовуються, а обробник
+            лишається той самий, тож вішати його на кожну кнопку не треба.
+          </li>
+          <li>
+            Перевірка класу кращий варіант, ніж <code>nodeName !== 'BUTTON'</code> із першої версії: якщо в картці
+            з'явиться ще одна кнопка, вона не видалятиме задачу.
+          </li>
+          <li>
+            <code>nextElementSibling</code> кнопки — це <code>h3</code>, з нього беремо назву. <code>filter</code>
+            повертає новий масив без цієї задачі, тому <code>tasks</code> оголошено через <code>let</code>.
+          </li>
+        </ul>
+        <div class="note" data-label="Можна покращити">
+          <ul>
+            <li>
+              <code>nextElementSibling</code> залежить від порядку в розмітці: поміняєш місцями кнопку і заголовок — і
+              видалення зламається. Надійніше:
+              <code>evt.target.closest('.task-list-item').querySelector('h3').textContent</code>.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Варіант: видалення за id" data-chips="Date.now, data-id, dataset" data-file="js/tasks.js">
+        <p class="cond">
+          Інший спосіб розв'язати проблему однакових назв: дати кожній задачі власний <code>id</code> і видаляти за
+          ним. Тоді назви можуть повторюватись.
+        </p>
+        <script type="text/plain" class="code">
+          // tasks.js → addTask
+          const task = { id: Date.now(), title, descr };
+
+          // render-tasks.js → картка зберігає id у data-атрибуті
+          `<li class="task-list-item" data-id="${task.id}">…</li>`
+
+          // tasks.js → deleteTask
+          const card = evt.target.closest('.task-list-item');
+          const id = Number(card.dataset.id); // dataset завжди повертає рядок
+          tasks = tasks.filter(el => el.id !== id);
+        </script>
+        <ul class="how">
+          <li><code>Date.now()</code> — кількість мілісекунд від 1970 року. Двічі за одну мілісекунду задачу не додаси, тож число унікальне.</li>
+          <li>
+            Так роблять у реальних проєктах: назву можна змінити або повторити, а <code>id</code> лишається.
+            Перевірка унікальності назви тоді потрібна тільки якщо цього хоче ТЗ.
+          </li>
+          <li>
+            У старих задач у <code>localStorage</code> <code>id</code> немає. Після такої зміни сховище треба
+            очистити.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Тема ===================== -->
+      <h2 class="part-title">Тема і точка входу</h2>
+
+      <article class="task" data-title="Перемикач теми" data-chips="classList, localStorage" data-file="js/theme-switcher.js">
+        <p class="cond">
+          Кнопка міняє клас <code>body</code> між <code>theme-dark</code> і <code>theme-light</code>. Вибір
+          зберігається.
+        </p>
+        <script type="text/plain" class="code">
+          import { getFromLs, saveInLS, THEMA_LS_KEY } from './local-storage-api';
+
+          export function themeSwitch() {
+            if (document.body.classList.contains('theme-dark')) {
+              document.body.classList.add('theme-light');
+              document.body.classList.remove('theme-dark');
+              saveInLS(THEMA_LS_KEY, 'theme-light');
+            } else {
+              document.body.classList.add('theme-dark');
+              document.body.classList.remove('theme-light');
+              saveInLS(THEMA_LS_KEY, 'theme-dark');
+            }
+          }
+
+          export function initTheme() {
+            const themeStatus = getFromLs(THEMA_LS_KEY);
+            if (themeStatus === 'theme-light') {
+              document.body.classList.add('theme-light');
+              document.body.classList.remove('theme-dark');
+            }
+          }
+        </script>
+        <ul class="how">
+          <li>
+            У HTML на <code>body</code> вже стоїть <code>theme-dark</code>. Тому <code>initTheme</code> досить
+            перевірити лише світлу тему.
+          </li>
+          <li>
+            Коротший варіант перемикання: <code>classList.toggle</code> на обидва класи.
+            <code>const isDark = document.body.classList.toggle('theme-dark');</code>
+            <code>document.body.classList.toggle('theme-light', !isDark);</code>
+          </li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>У гілці <code>else</code> були зайві фігурні дужки <code>{ { … } }</code>. Код працює, але їх варто прибрати (тут уже прибрано).</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Точка входу" data-chips="import, addEventListener" data-file="main.js">
+        <p class="cond">Підключити модулі, відновити дані зі сховища й повісити обробники.</p>
+        <script type="text/plain" class="code">
+          import { refs } from './js/refs';
+          import { addTask, deleteTask, initTasks } from './js/tasks';
+          import { initTheme, themeSwitch } from './js/theme-switcher';
+
+          initTasks();
+          initTheme();
+          refs.form.addEventListener('submit', addTask);
+          refs.task.addEventListener('click', deleteTask);
+          refs.themeBtn.addEventListener('click', themeSwitch);
+        </script>
+        <ul class="how">
+          <li><code>main.js</code> тільки з'єднує частини. Уся логіка лежить в окремих модулях.</li>
+          <li>Спочатку <code>initTasks</code> і <code>initTheme</code>: сторінка одразу показує збережений стан.</li>
+          <li>Функції передаємо без дужок (<code>addTask</code>, а не <code>addTask()</code>): їх викличе браузер, коли станеться подія.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Разом ===================== -->
+      <h2 class="part-title">Усе разом</h2>
+
+      <article class="task" data-title="Застосунок одним блоком" data-chips="пісочниця" data-file="">
+        <p class="cond">
+          Ті самі модулі, склеєні в один скрипт, щоб запустити тут, без Vite. Замість iziToast — повідомлення в
+          консолі. Додай задачі, спробуй повтор назви, а потім натисни «Запустити» ще раз: сторінка почнеться
+          спочатку, а задачі й тема відновляться з <code>localStorage</code>.
+        </p>
+        <script type="text/plain" class="code" data-run="sandbox">
+          // refs.js
+          const refs = {
+            form: document.querySelector('.header-form'),
+            task: document.querySelector('#task-list'),
+            themeBtn: document.querySelector('#themeToggle'),
+          };
+
+          // local-storage-api.js
+          const TASK_LS_KEY = 'tasks';
+          const THEMA_LS_KEY = 'theme';
+          const saveInLS = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+          const getFromLs = key => JSON.parse(localStorage.getItem(key)); // null → null
+
+          // render-tasks.js
+          function renderTasks(array) {
+            refs.task.innerHTML = array
+              .map(
+                task => `<li class="task-list-item">
+                  <button class="task-list-item-btn">Delete</button>
+                  <h3>${task.title}</h3>
+                  <p>${task.descr}</p>
+                </li>`
+              )
+              .join('');
+          }
+
+          // tasks.js
+          let tasks = getFromLs(TASK_LS_KEY) || [];
+
+          function addTask(event) {
+            event.preventDefault();
+            const title = event.target.elements.taskName.value.trim();
+            const descr = event.target.elements.taskDescription.value.trim();
+
+            if (title === '' || descr === '') {
+              console.warn('Заповніть всі поля !');
+              return;
+            }
+            if (tasks.some(el => el.title.toLowerCase() === title.toLowerCase())) {
+              console.warn('Задача з такою назвою вже є !');
+              return;
+            }
+
+            tasks.push({ title, descr });
+            renderTasks(tasks);
+            saveInLS(TASK_LS_KEY, tasks);
+            console.log('Додано:', title);
+            event.target.reset();
+          }
+
+          function deleteTask(evt) {
+            if (!evt.target.classList.contains('task-list-item-btn')) return;
+
+            const title = evt.target.closest('.task-list-item').querySelector('h3').textContent;
+            tasks = tasks.filter(el => el.title !== title);
+            renderTasks(tasks);
+            saveInLS(TASK_LS_KEY, tasks);
+            console.log('Видалено:', title);
+          }
+
+          // theme-switcher.js
+          function themeSwitch() {
+            const isDark = document.body.classList.toggle('theme-dark');
+            document.body.classList.toggle('theme-light', !isDark);
+            saveInLS(THEMA_LS_KEY, isDark ? 'theme-dark' : 'theme-light');
+          }
+
+          function initTheme() {
+            if (getFromLs(THEMA_LS_KEY) === 'theme-light') themeSwitch();
+          }
+
+          // main.js
+          renderTasks(tasks);
+          initTheme();
+          refs.form.addEventListener('submit', addTask);
+          refs.task.addEventListener('click', deleteTask);
+          refs.themeBtn.addEventListener('click', themeSwitch);
+          console.log('Задач у сховищі:', tasks.length);
+        </script>
+        <ul class="how">
+          <li>
+            Пісочниця працює на тому ж сайті, що й конспект, тому бачить той самий <code>localStorage</code>. Застосунок
+            на Vite (<code>localhost:5173</code>) — інший сайт, у нього своє сховище.
+          </li>
+          <li>Щоб почати з нуля, допиши в кінець <code>localStorage.clear()</code> і запусти один раз.</li>
+        </ul>
+      </article>
+    </main>
+  </body>
+</html>

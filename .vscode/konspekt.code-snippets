@@ -1,0 +1,109 @@
+{
+  // Шаблони для конспекту. Набери префікс у .html-файлі й натисни Tab.
+  // Tab переходить до наступного поля, яке треба заповнити.
+
+  "Konspekt: нова сторінка уроку": {
+    "scope": "html",
+    "prefix": "klesson",
+    "body": [
+      "<!doctype html>",
+      "<html lang=\"uk\">",
+      "  <head>",
+      "    <meta charset=\"UTF-8\" />",
+      "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, viewport-fit=cover\" />",
+      "    <title>Blended JS · Заняття ${1:N}</title>",
+      "    <link rel=\"stylesheet\" href=\"css/style.css\" />",
+      "    <script type=\"module\" src=\"js/konspekt.js\"></script>",
+      "  </head>",
+      "  <body>",
+      "    <main data-lesson=\"${1:N}\" data-title=\"${2:Тема уроку}\" data-file=\"js-inKlass/lesson-${1:N}.js\">",
+      "      <p class=\"lede\">${3:Короткий вступ: про що урок.}</p>",
+      "",
+      "      <h2 class=\"part-title\">${4:Назва групи задач}</h2>",
+      "",
+      "      $0",
+      "    </main>",
+      "  </body>",
+      "</html>"
+    ]
+  },
+
+  "Konspekt: група задач": {
+    "scope": "html",
+    "prefix": "kpart",
+    "body": ["<h2 class=\"part-title\">${1:Назва групи}</h2>", "$0"]
+  },
+
+  "Konspekt: задача": {
+    "scope": "html",
+    "prefix": "ktask",
+    "body": [
+      "<article class=\"task\" data-title=\"${1:Назва задачі}\" data-chips=\"${2:map, filter}\">",
+      "  <p class=\"cond\">${3:Умова задачі}</p>",
+      "  <script type=\"text/plain\" class=\"code\" data-run>",
+      "    ${4:console.log(\"рішення\");}",
+      "  </script>",
+      "  <ul class=\"how\">",
+      "    <li>${5:Як це працює}</li>",
+      "  </ul>",
+      "</article>",
+      "$0"
+    ]
+  },
+
+  "Konspekt: блок коду з кнопкою Запустити": {
+    "scope": "html",
+    "prefix": "kcode",
+    "body": ["<script type=\"text/plain\" class=\"code\" data-run>", "  ${1:console.log(\"Hello\");}", "</script>"]
+  },
+
+  "Konspekt: блок коду, що виконується в пісочниці (DOM)": {
+    "scope": "html",
+    "prefix": "ksandbox",
+    "body": [
+      "<script type=\"text/plain\" class=\"code\" data-run=\"sandbox\" data-focus=\"${1:.box}\">",
+      "  ${2:const box = document.querySelector(\".box\");}",
+      "</script>"
+    ]
+  },
+
+  "Konspekt: блок коду без запуску": {
+    "scope": "html",
+    "prefix": "kcodeview",
+    "body": ["<script type=\"text/plain\" class=\"code\">", "  ${1:const a = 1;}", "</script>"]
+  },
+
+  "Konspekt: пункт пояснення": {
+    "scope": "html",
+    "prefix": "kli",
+    "body": ["<li>${1:Пояснення}</li>"]
+  },
+
+  "Konspekt: зауваження до коду": {
+    "scope": "html",
+    "prefix": "knote",
+    "body": ["<div class=\"note\"><ul><li>${1:Що не так у коді і як виправити}</li></ul></div>"]
+  },
+
+  "Konspekt: інлайн-код": {
+    "scope": "html",
+    "prefix": "kc",
+    "body": ["<code>${1}</code>$0"]
+  },
+
+  "Konspekt: урок у списку index.html": {
+    "scope": "html",
+    "prefix": "kindex",
+    "body": [
+      "<li>",
+      "  <a href=\"lesson-${1:N}.html\">",
+      "    <span class=\"task-no\">${1:N}</span>",
+      "    <span>",
+      "      <b>${2:Тема уроку}</b>",
+      "      <small>${3:lesson-${1:N}.js, задачі 1–10}</small>",
+      "    </span>",
+      "  </a>",
+      "</li>"
+    ]
+  }
+}

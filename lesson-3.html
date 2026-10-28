@@ -2,68 +2,441 @@
 <html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    />
-    <title>Blended JS · Заняття 2</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Blended JS · Заняття 3</title>
     <meta name="claude:viewport-fit-sides" content="cover" />
-    <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/container.css" />
-    <link rel="stylesheet" href="css/demo.css" />
-    <script type="module" src="js/lesson-3.js"></script>
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/konspekt.js"></script>
   </head>
   <body>
-    <main>
-      <header class="intro">
-        <div class="eyebrow">
-          <a href="index.html">← Усі уроки</a> · blendedJS ·
-          js-inKlass/lesson-3.js
+    <main data-lesson="3" data-title="Перебираючі методи масивів і класи" data-file="js-inKlass/lesson-3.js">
+      <p class="lede">
+        Конспект третього заняття: стрілочні функції, <code>map</code>, <code>flatMap</code>, <code>some</code>,
+        <code>every</code>, <code>find</code>, <code>toSorted</code>, <code>filter</code>, <code>reduce</code>, а потім
+        класи: <code>constructor</code>, ланцюжки методів, приватні поля, геттери й сеттери, <code>extends</code> і
+        <code>super</code>. Кожен блок коду можна змінити й запустити.
+      </p>
+
+      <!-- ===================== Шпаргалка ===================== -->
+      <article class="task" id="cheat" data-no="★" data-title="Шпаргалка: що повертає кожен метод" data-file="">
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Метод</th><th>Колбек повертає</th><th>Метод повертає</th><th>Змінює масив?</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>map</code></td><td>нове значення</td><td>новий масив тієї ж довжини</td><td>ні</td></tr>
+              <tr><td><code>flatMap</code></td><td>масив (або значення)</td><td>новий «розплющений» масив</td><td>ні</td></tr>
+              <tr><td><code>filter</code></td><td><code>true</code> / <code>false</code></td><td>новий масив із тих, де <code>true</code></td><td>ні</td></tr>
+              <tr><td><code>find</code></td><td><code>true</code> / <code>false</code></td><td>перший елемент, де <code>true</code>, або <code>undefined</code></td><td>ні</td></tr>
+              <tr><td><code>some</code></td><td><code>true</code> / <code>false</code></td><td><code>true</code>, якщо хоч один <code>true</code></td><td>ні</td></tr>
+              <tr><td><code>every</code></td><td><code>true</code> / <code>false</code></td><td><code>true</code>, якщо всі <code>true</code></td><td>ні</td></tr>
+              <tr><td><code>reduce</code></td><td>новий акумулятор</td><td>одне значення (акумулятор)</td><td>ні</td></tr>
+              <tr><td><code>toSorted</code></td><td>число: &lt;0, 0, &gt;0</td><td>новий відсортований масив</td><td>ні</td></tr>
+              <tr><td><code>sort</code></td><td>число: &lt;0, 0, &gt;0</td><td>той самий масив</td><td><b>так</b></td></tr>
+              <tr><td><code>forEach</code></td><td>нічого</td><td><code>undefined</code></td><td>ні</td></tr>
+            </tbody>
+          </table>
         </div>
-        <h1>JavaScript: заняття 3. Перебираючі методи масивів</h1>
-        <p class="lede">
-          У кожної задачі є умова, робоче рішення, пояснення і пісочниця.
+        <ul class="how">
+          <li>
+            Стрілочна функція з <b>фігурними дужками</b> повертає значення тільки через <code>return</code>:
+            <code>(n) =&gt; { return n * 2; }</code>. <b>Без дужок</b> результат повертається автоматично:
+            <code>(n) =&gt; n * 2</code>.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Перебираючі методи ===================== -->
+      <h2 class="part-title">Перебираючі методи масивів</h2>
+
+      <article class="task" data-title="Квадрати чисел: map" data-chips="map, =>, **">
+        <p class="cond">З масиву <code>[1, 2, 3, 4, 5]</code> створити новий масив квадратів: <code>[1, 4, 9, 16, 25]</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const numbers = [1, 2, 3, 4, 5];
+
+          const getSquares = (array) => array.map((number) => number ** 2);
+
+          console.log(getSquares(numbers)); // [1, 4, 9, 16, 25]
+          console.log(getSquares([2, 12, 34])); // [4, 144, 1156]
+          console.log(numbers); // оригінал не змінився
+        </script>
+        <ul class="how">
+          <li><code>map</code> викликає колбек для кожного елемента і збирає те, що він повернув, у <b>новий</b> масив тієї ж довжини.</li>
+          <li><code>**</code> — піднесення до степеня, тобто <code>n ** 2</code> те саме, що <code>n * n</code>.</li>
+        </ul>
+        <div class="note"><ul><li>Змінна називалась <code>dubleNumbers</code>, але тут квадрати, а не подвоєння. Краща назва: <code>squares</code>.</li></ul></div>
+      </article>
+
+      <article class="task" data-title="Усі values в одному масиві: flatMap" data-chips="flatMap, return у =>">
+        <p class="cond">З масиву об'єктів <code>{ id, values: [...] }</code> зібрати всі <code>values</code> в один масив: <code>[1, 2, …, 9]</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const data = [
+            { id: 1, values: [1, 2, 3] },
+            { id: 2, values: [4, 5, 6] },
+            { id: 3, values: [7, 8, 9] },
+          ];
+
+          const getAllValues = (array) => array.flatMap((item) => item.values);
+          console.log(getAllValues(data)); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+          // для порівняння: map дає масив масивів
+          console.log(data.map((item) => item.values));
+
+          // помилка з lesson-3.js: фігурні дужки без return
+          console.log(data.flatMap((item) => { item.values; }));
+        </script>
+        <ul class="how">
+          <li><code>flatMap</code> = <code>map</code> + розплющення на один рівень. Масиви, які повернув колбек, зливаються в один.</li>
+          <li><code>map</code> тут дав би <code>[[1, 2, 3], [4, 5, 6], [7, 8, 9]]</code>.</li>
+        </ul>
+        <div class="note"><ul><li>Перший варіант: <code>(element) =&gt; { element.values; }</code>. У фігурних дужках потрібен <code>return</code>, інакше колбек повертає <code>undefined</code>. Запусти код вище й подивись на останній рядок.</li></ul></div>
+      </article>
+
+      <article class="task" data-title="Чи є хтось молодший за 20: some" data-chips="some">
+        <p class="cond">Перевірити, чи є в масиві людей хоча б один з віком менше 20. Очікуваний результат: <code>true</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const people = [
+            { name: "John", age: 27 },
+            { name: "Jane", age: 31 },
+            { name: "Bob", age: 19 },
+          ];
+
+          const hasUnder20 = (array) => array.some((person) => person.age < 20);
+
+          console.log(hasUnder20(people)); // true
+          console.log(hasUnder20([{ name: "Ann", age: 40 }])); // false
+        </script>
+        <ul class="how">
+          <li><code>some</code> зупиняється на першому <code>true</code>, решту елементів не перевіряє.</li>
+          <li>Для порожнього масиву повертає <code>false</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Чи всі числа парні: every" data-chips="every, %">
+        <p class="cond">Перевірити, чи кожен елемент масиву <code>[2, 4, 6, 8, 10]</code> парний. Очікуваний результат: <code>true</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const numbers = [2, 4, 6, 8, 10];
+
+          const allEven = (array) => array.every((number) => number % 2 === 0);
+
+          console.log(allEven(numbers)); // true
+          console.log(allEven([2, 4, 5])); // false — зупинився на 5
+        </script>
+        <ul class="how">
+          <li><code>every</code> — протилежність <code>some</code>: зупиняється на першому <code>false</code>.</li>
+          <li>Для порожнього масиву повертає <code>true</code>, бо жодного «поганого» елемента немає.</li>
+        </ul>
+        <div class="note"><ul><li>Параметр колбека названий так само, як масив (<code>numBers</code>), і перекриває його. Назви параметр в однині: <code>number</code>.</li></ul></div>
+      </article>
+
+      <article class="task" data-title="Перше непарне число: find" data-chips="find, undefined">
+        <p class="cond">Знайти перше непарне число в масиві <code>[2, 1, 6, 8, 9, 10, 12]</code>. Очікуваний результат: <code>1</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const numbers = [2, 1, 6, 8, 9, 10, 12];
+
+          const findFirstOdd = (array) => array.find((number) => number % 2 !== 0);
+
+          console.log(findFirstOdd(numbers)); // 1
+          console.log(findFirstOdd([2, 4, 6])); // undefined — непарних немає
+        </script>
+        <ul class="how">
+          <li><code>find</code> повертає <b>сам елемент</b>, а не <code>true</code>, і зупиняється на першому збігу.</li>
+          <li>Якщо нічого не знайдено, повертає <code>undefined</code>. Індекс елемента шукає <code>findIndex</code>.</li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>Умова <code>el % 2 === 0</code> шукає <b>парне</b> число, тому вийде 2 замість 1. Для непарного потрібно <code>!== 0</code>.</li>
+            <li><code>getFindNumber(arry)</code> всередині працює з <code>numbErs</code>, а не з параметром <code>arry</code>. Функція ігнорує те, що їй передали. Та сама історія в задачах 6 і 7.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Сортування чисел: toSorted" data-chips="toSorted, a - b">
+        <p class="cond">Відсортувати <code>[4, 2, 5, 1, 3]</code> за зростанням. Очікуваний результат: <code>[1, 2, 3, 4, 5]</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const numbers = [4, 2, 5, 1, 3];
+
+          const sortAsc = (array) => array.toSorted((a, b) => a - b);
+
+          console.log(sortAsc(numbers)); // [1, 2, 3, 4, 5]
+          console.log(numbers.toSorted((a, b) => b - a)); // за спаданням
+          console.log(numbers); // оригінал той самий
+
+          // без функції порівняння числа сортуються як рядки
+          console.log([10, 9, 1, 100].toSorted()); // [1, 10, 100, 9]
+        </script>
+        <ul class="how">
+          <li>Функція порівняння повертає число: <b>від'ємне</b> ставить <code>a</code> перед <code>b</code>, <b>додатне</b> ставить <code>b</code> перед <code>a</code>, <code>0</code> лишає порядок.</li>
+          <li><code>toSorted</code> повертає новий масив. Старий <code>sort</code> сортує <b>той самий</b> масив.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Сортування рядків за алфавітом" data-chips="toSorted, localeCompare">
+        <p class="cond">Відсортувати <code>["banana", "orange", "apple", "pear"]</code> за алфавітом.</p>
+        <script type="text/plain" class="code" data-run>
+          const fruits = ["banana", "orange", "apple", "pear"];
+
+          const sortByAlphabet = (array) => array.toSorted((a, b) => a.localeCompare(b));
+
+          console.log(sortByAlphabet(fruits)); // ["apple", "banana", "orange", "pear"]
+          console.log(sortByAlphabet(["ґанок", "яблуко", "борщ", "Ігор"])); // працює й для кирилиці
+        </script>
+        <ul class="how">
+          <li><code>a.localeCompare(b)</code> сам повертає від'ємне число, 0 або додатне, тобто саме те, що чекає <code>toSorted</code>.</li>
+          <li>Він враховує правила мови, тому правильно сортує літери на кшталт <code>ґ</code> та <code>і</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Сортування об'єктів за віком" data-chips="toSorted, a.age - b.age">
+        <p class="cond">Відсортувати масив користувачів за віком за зростанням.</p>
+        <script type="text/plain" class="code" data-run>
+          const users = [
+            { name: "John", age: 27 },
+            { name: "Jane", age: 31 },
+            { name: "Bob", age: 19 },
+          ];
+
+          const sortByAge = (array) => array.toSorted((a, b) => a.age - b.age);
+
+          console.log(sortByAge(users));
+          // за іменем — комбінація з попередньої задачі:
+          console.log(users.toSorted((a, b) => a.name.localeCompare(b.name)));
+        </script>
+        <ul class="how">
+          <li>Порівнюємо не самі об'єкти, а їхні поля: <code>a.age - b.age</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Старші за 20: filter" data-chips="filter">
+        <p class="cond">Створити новий масив лише з тих об'єктів, де вік більше 20.</p>
+        <script type="text/plain" class="code" data-run>
+          const users = [
+            { name: "John", age: 27 },
+            { name: "Jane", age: 31 },
+            { name: "Bob", age: 19 },
+          ];
+
+          const getOlderThan20 = (array) => array.filter((user) => user.age > 20);
+
+          console.log(getOlderThan20(users)); // John і Jane
+          console.log(getOlderThan20(users).map((user) => user.name)); // ланцюжок методів
+        </script>
+        <ul class="how">
+          <li><code>filter</code> лишає елементи, для яких колбек повернув <code>true</code>. Якщо нічого не підходить, повертає порожній масив <code>[]</code>, а не <code>undefined</code>.</li>
+          <li>Методи, що повертають масив, можна з'єднувати в ланцюжок: <code>filter(...).map(...)</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Сума елементів: reduce" data-chips="reduce, акумулятор">
+        <p class="cond">Обчислити суму елементів масиву <code>[1, 2, 3, 4, 5]</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          const numbers = [1, 2, 3, 4, 5];
+
+          const getSum = (array) => array.reduce((total, number) => total + number, 0);
+
+          console.log(getSum(numbers)); // 15
+          console.log(getSum([])); // 0 — завдяки початковому значенню
+
+          // покроково: що відбувається всередині
+          numbers.reduce((total, number) => {
+            console.log(`total = ${total}, number = ${number} → ${total + number}`);
+            return total + number;
+          }, 0);
+        </script>
+        <ul class="how">
+          <li><code>reduce(колбек, початкове значення)</code>. Колбек отримує <b>акумулятор</b> (результат попереднього кроку) і поточний елемент, а повертає новий акумулятор.</li>
+          <li>Другий аргумент <code>0</code> — це початкове значення. Без нього <code>reduce</code> на порожньому масиві кидає помилку.</li>
+        </ul>
+        <div class="note" data-label="Зауваження"><ul><li>У lesson-3.js цю задачу ще не розв'язано. Вище готове рішення.</li></ul></div>
+      </article>
+
+      <!-- ===================== Класи ===================== -->
+      <h2 class="part-title">Класи</h2>
+
+      <article class="task" data-no="К" id="class-intro" data-title="Клас User: пояснення викладача" data-chips="class, constructor, new, this">
+        <p class="cond">Клас — це «креслення», за яким <code>new</code> створює однакові за будовою об'єкти зі спільними методами.</p>
+        <script type="text/plain" class="code" data-run>
+          class User {
+            constructor(name, age) {
+              this.name = name;
+              this.age = age;
+              this.hobbies = [];
+            }
+
+            getInfo() {
+              return `I'm ${this.name}, I have ${this.hobbies.length} hobbies :)`;
+            }
+
+            addHobby(newHobby) {
+              this.hobbies.push(newHobby);
+            }
+          }
+
+          const user1 = new User("Alex", 23);
+          user1.addHobby("reading");
+          console.log(user1.getInfo());
+          console.log(user1);
+
+          const user2 = new User("Mariia", 24);
+          console.log(user2.getInfo());
+          console.log(user1.getInfo === user2.getInfo); // true — метод спільний
+        </script>
+        <ul class="how">
+          <li><code>constructor</code> запускається один раз на кожен <code>new</code> і заповнює властивості через <code>this</code>.</li>
+          <li>Методи, оголошені в класі, не копіюються в кожен об'єкт: вони спільні для всіх екземплярів.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Calculator з ланцюжком методів" data-chips="return this, chaining, throw new Error">
+        <p class="cond">
+          Клас <code>Calculator</code> з методами <code>number</code>, <code>add</code>, <code>subtract</code>,
+          <code>multiply</code>, <code>divide</code> і <code>getResult</code>. Усі, крім <code>getResult</code>,
+          повертають <code>this</code>. <code>divide(0)</code> має кинути помилку.
         </p>
-        <div class="legend">
-          <span class="pill neutral">› console.log</span>
-          <span class="pill neutral">alert › повідомлення</span>
-          <span class="pill neutral">return › значення функції</span>
-        </div>
-      </header>
+        <script type="text/plain" class="code" data-run>
+          class Calculator {
+            constructor() {
+              this.result = 0;
+            }
+            number(value) {
+              this.result = value;
+              return this;
+            }
+            add(value) {
+              this.result += value;
+              return this;
+            }
+            subtract(value) {
+              this.result -= value;
+              return this;
+            }
+            multiply(value) {
+              this.result *= value;
+              return this;
+            }
+            divide(value) {
+              if (value === 0) {
+                throw new Error("Ділити на 0 не можна");
+              }
+              this.result /= value;
+              return this;
+            }
+            getResult() {
+              return this.result;
+            }
+          }
 
-      <nav class="toc" aria-label="Зміст">
-        <div>
-          <h2></h2>
-          <ol>
-            <li>
-              <a href="#t1"><span>1</span></a>
-            </li>
-            <li>
-              <a href="#t2"><span>2</span></a>
-            </li>
-            <li>
-              <a href="#t3"><span>3</span></a>
-            </li>
-            <li>
-              <a href="#t4"><span>4</span></a>
-            </li>
-            <li>
-              <a href="#t5"><span>5</span></a>
-            </li>
-            <li>
-              <a href="#t6"><span>6</span></a>
-            </li>
-          </ol>
-        </div>
-      </nav>
+          const calc = new Calculator();
+          const result = calc.number(10).add(5).subtract(3).multiply(4).divide(2).getResult();
+          console.log(result); // 24
 
-      <h2 class="part-title"></h2>
+          try {
+            calc.number(5).divide(0);
+          } catch (error) {
+            console.error(error.message);
+          }
+        </script>
+        <ul class="how">
+          <li><b>Ланцюжок</b> працює, бо кожен метод повертає <code>this</code>, тобто той самий об'єкт. Наступний <code>.add()</code> викликається вже на ньому.</li>
+          <li><code>getResult</code> повертає число, тому він завжди останній у ланцюжку.</li>
+          <li><code>throw new Error(...)</code> зупиняє виконання. Перехопити помилку можна через <code>try...catch</code>.</li>
+        </ul>
+        <div class="note"><ul><li>За умовою <code>divide(0)</code> має <b>викидати помилку</b>, а в lesson-3.js там <code>console.log("Error!")</code>. Ланцюжок у такому разі йде далі з неправильним значенням.</li></ul></div>
+      </article>
 
-      <footer>
-        Пісочниці перераховують результат при кожній зміні поля. Код у блоках
-        виправлений і відповідає умовам; зауваження стосуються версії в
-        js-inKlass/lesson-2.js.
-      </footer>
+      <article class="task" data-title="Client: приватні поля, get і set" data-chips="#private, get, set">
+        <p class="cond">Клас <code>Client</code> з приватними <code>#login</code> і <code>#email</code>. Доступ до них лише через геттери й сеттери <code>login</code> та <code>email</code>.</p>
+        <script type="text/plain" class="code" data-run>
+          class Client {
+            #login;
+            #email;
+
+            constructor(login, email) {
+              this.#login = login;
+              this.#email = email;
+            }
+
+            get login() {
+              return this.#login;
+            }
+            set login(newLogin) {
+              this.#login = newLogin;
+            }
+
+            get email() {
+              return this.#email;
+            }
+            set email(newEmail) {
+              this.#email = newEmail;
+            }
+          }
+
+          const client = new Client("Dimon", "sss@gmail.com");
+          console.log(client.login); // геттер, без дужок
+          client.login = "Dmytro"; // сеттер — як звичайне присвоєння
+          console.log(client.login);
+          console.log(client); // приватних полів зовні не видно
+        </script>
+        <ul class="how">
+          <li>Поля з <code>#</code> доступні тільки всередині класу. Звернення <code>client.#login</code> зовні — це синтаксична помилка.</li>
+          <li><code>get</code> і <code>set</code> виглядають як звичайна властивість (<code>client.login</code>), але всередині це методи. Туди зручно додати перевірку.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Person і Employee: наслідування" data-chips="extends, super, ...rest, деструктуризація">
+        <p class="cond">
+          Клас <code>Person</code> (name, age, gender, email) з методом <code>getDetails()</code>. Клас <code>Employee</code>
+          розширює <code>Person</code>, додає <code>salary</code> й <code>department</code> і має метод <code>getEmployeeDetails()</code>.
+        </p>
+        <script type="text/plain" class="code" data-run>
+          class Person {
+            constructor({ name, age, gender, email }) {
+              this.name = name;
+              this.age = age;
+              this.gender = gender;
+              this.email = email;
+            }
+
+            getDetails() {
+              const { name, age, gender, email } = this;
+              return { name, age, gender, email };
+            }
+          }
+
+          class Employee extends Person {
+            constructor({ salary, department, ...personData }) {
+              super(personData); // спочатку батьківський конструктор
+              this.salary = salary;
+              this.department = department;
+            }
+
+            getEmployeeDetails() {
+              const { salary, department } = this;
+              return { salary, department };
+            }
+          }
+
+          const employee = new Employee({
+            name: "Oleh",
+            age: 22,
+            gender: "male",
+            email: "oleh@gmail.com",
+            salary: 2000,
+            department: "Frontend",
+          });
+
+          console.log(employee.getDetails()); // метод успадкований від Person
+          console.log(employee.getEmployeeDetails());
+          console.log(employee instanceof Person); // true
+        </script>
+        <ul class="how">
+          <li><code>extends</code> дає нащадку всі методи батька. Тому <code>employee.getDetails()</code> працює, хоча в <code>Employee</code> такого методу немає.</li>
+          <li>У конструкторі нащадка <code>super(...)</code> треба викликати <b>до</b> першого звернення до <code>this</code>.</li>
+          <li><code>{ salary, department, ...personData }</code> бере два поля, а решту збирає в новий об'єкт для <code>super</code>.</li>
+          <li>Твій варіант <code>{ ...super.getDetails(), salary, department }</code> теж правильний, якщо потрібні всі дані разом.</li>
+        </ul>
+      </article>
     </main>
   </body>
 </html>
