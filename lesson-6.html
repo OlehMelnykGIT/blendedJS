@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Blended JS · Заняття 6</title>
+    <meta name="claude:viewport-fit-sides" content="cover" />
+    <link rel="stylesheet" href="css/style.css" />
+    <script type="module" src="js/konspekt.js"></script>
+  </head>
+  <body>
+    <main
+      data-lesson="6"
+      data-title="JSON, вебсховища, модулі й асинхронність: магазин товарів"
+      data-file="blended_products/src/"
+    >
+      <p class="lede">
+        Інтернет-магазин на трьох сторінках: Home (категорії, пошук, «Load More»), Wishlist і Cart. Дані приходять з
+        <a href="https://dummyjson.com/docs/products">dummyjson.com</a> через axios, списки ID товарів лежать у
+        <code>localStorage</code>, код розбитий на модулі за ролями. Запуск: <code>cd blended_products</code>,
+        <code>npm run dev</code>. Зібрана версія відкривається <a href="blended_products/">за посиланням</a>. Тут
+        код кожного модуля з поясненнями, помилки з мого варіанту з заняття і поради, які згодяться в інших
+        проєктах.
+      </p>
+
+      <!-- ===================== Шпаргалка ===================== -->
+      <article class="task" id="cheat" data-no="★" data-title="Шпаргалка: запити, async/await, сховище" data-file="">
+        <div class="table-wrap">
+          <table class="data">
+            <thead>
+              <tr><th>Що треба</th><th>Як</th><th>Примітка</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>GET-запит</td><td><code>const { data } = await axios.get(url)</code></td><td>axios сам робить <code>JSON.parse</code></td></tr>
+              <tr><td>Query-параметри</td><td><code>axios.get(url, { params: { limit: 12, skip: 0 } })</code></td><td>axios сам допише <code>?limit=12&amp;skip=0</code></td></tr>
+              <tr><td>Спільна адреса</td><td><code>axios.defaults.baseURL = BASE_URL</code></td><td>далі пишемо тільки шлях</td></tr>
+              <tr><td>Пагінація</td><td><code>skip = (page - 1) * LIMIT</code></td><td>кінець: <code>page * LIMIT &gt;= total</code></td></tr>
+              <tr><td>Кілька запитів разом</td><td><code>await Promise.all(ids.map(fetchById))</code></td><td>одна помилка — весь <code>Promise.all</code> падає</td></tr>
+              <tr><td>Обробка помилок</td><td><code>try { await … } catch (e) { … } finally { … }</code></td><td><code>finally</code> виконується завжди</td></tr>
+              <tr><td>Делегування</td><td><code>event.target.closest('.card')</code></td><td>спрацює і при кліку по дочірньому елементу</td></tr>
+              <tr><td>data-атрибут</td><td><code>el.dataset.id</code></td><td>завжди рядок → <code>Number()</code></td></tr>
+              <tr><td>Клас за умовою</td><td><code>el.classList.toggle('cls', isVisible)</code></td><td>другий аргумент: додати чи прибрати</td></tr>
+              <tr><td>Зберегти масив</td><td><code>localStorage.setItem(key, JSON.stringify(arr))</code></td><td>сховище тримає тільки рядки</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <ul class="how">
+          <li>
+            Кожен модуль має одну роль: <code>products-api</code> тільки ходить на бекенд, <code>render-functions</code>
+            тільки малює, <code>storage</code> тільки читає й пише <code>localStorage</code>. Хендлери з'єднують їх
+            між собою, а файли сторінок (<code>home.js</code>, <code>cart.js</code>, <code>wishlist.js</code>) вішають
+            слухачі.
+          </li>
+          <li>
+            У сховищі лежать тільки ID товарів, не самі товари. Ціна чи опис можуть змінитись на бекенді, а ID
+            лишається. Тому Wishlist і Cart щоразу запитують свіжі дані за цими ID.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Бекенд ===================== -->
+      <h2 class="part-title">Запити до бекенду</h2>
+
+      <article class="task" data-title="Константи" data-chips="export const" data-file="blended_products/src/js/constants.js">
+        <p class="cond">Адреса бекенду, ендпоінти, розмір сторінки й ключі <code>localStorage</code> в одному файлі.</p>
+        <script type="text/plain" class="code">
+          export const BASE_URL = 'https://dummyjson.com';
+          export const END_POINTS = {
+            categories: '/products/category-list',
+            products: '/products',
+            productsByCategory: '/products/category',
+            productsBySearch: '/products/search',
+          };
+
+          export const LIMIT = 12;
+
+          // Ключі localStorage — в одному місці, щоб не помилитись у рядку
+          export const STORAGE_KEYS = {
+            cart: 'cart',
+            wishlist: 'wishlist',
+            theme: 'theme',
+          };
+
+          export const ALL_CATEGORY = 'All';
+        </script>
+        <ul class="how">
+          <li>
+            Помилка в рядку <code>'wishlsit'</code> не дасть жодного повідомлення: просто «зникнуть» дані. Помилка в
+            імені <code>STORAGE_KEYS.wishlsit</code> одразу видно (<code>undefined</code>, підказка редактора).
+          </li>
+          <li>
+            <code>ALL_CATEGORY</code> використовується в рендері кнопок і в перевірці кліку. Якщо колись захочеш
+            написати «Усі», зміниш в одному місці.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Функції запитів" data-chips="axios, params, Promise.all" data-file="blended_products/src/js/products-api.js">
+        <p class="cond">
+          Ендпоінти №2–№6 з ТЗ. Кожна функція повертає дані, а не малює їх: так ту саму функцію можна викликати з
+          будь-якої сторінки.
+        </p>
+        <script type="text/plain" class="code">
+          import axios from 'axios';
+          import { BASE_URL, END_POINTS, LIMIT } from './constants';
+
+          axios.defaults.baseURL = BASE_URL;
+
+          // Параметри пагінації однакові для всіх списків: сторінка 2 → skip=12
+          function pageParams(page) {
+            return {
+              limit: LIMIT,
+              skip: (page - 1) * LIMIT,
+            };
+          }
+
+          export async function fetchCategories() {
+            const { data } = await axios.get(END_POINTS.categories);
+            return data;
+          }
+
+          export async function fetchProducts(page = 1) {
+            const { data } = await axios.get(END_POINTS.products, {
+              params: pageParams(page),
+            });
+            return data;
+          }
+
+          export async function fetchByCategory(category, page = 1) {
+            const { data } = await axios.get(
+              `${END_POINTS.productsByCategory}/${category}`,
+              { params: pageParams(page) }
+            );
+            return data;
+          }
+
+          export async function fetchBySearch(query, page = 1) {
+            const { data } = await axios.get(END_POINTS.productsBySearch, {
+              params: { q: query, ...pageParams(page) },
+            });
+            return data;
+          }
+
+          export async function fetchProductById(id) {
+            const { data } = await axios.get(`${END_POINTS.products}/${id}`);
+            return data;
+          }
+
+          // Усі запити стартують одночасно, Promise.all чекає на всі
+          export function fetchProductsByIds(ids) {
+            return Promise.all(ids.map(id => fetchProductById(id)));
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>pageParams</code> рахує <code>skip</code> для всіх трьох списків. Пагінація працює і для категорій, і
+            для пошуку: бекенд приймає <code>limit</code>/<code>skip</code> на кожному з цих ендпоінтів.
+          </li>
+          <li>
+            У <code>params</code> пошукове слово кодує сам axios. Рядок <code>`?q=${query}`</code> зламався б на
+            символах <code>&amp;</code> чи <code>#</code>.
+          </li>
+          <li>
+            <code>fetchProductsByIds</code> запускає всі запити одночасно. Три товари по 200 мс кожен приходять за
+            ~200 мс, а не за 600, як у циклі з <code>await</code> всередині.
+          </li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>
+              У моєму варіанті <code>fetchBySearch()</code> не мала параметра, а в URL стояла змінна
+              <code>category</code>, якої в цій функції немає → <code>ReferenceError</code> при першому пошуку.
+            </li>
+            <li>
+              <code>fetchByCategory</code> і <code>fetchBySearch</code> не передавали <code>limit</code>/<code>skip</code>,
+              тож бекенд повертав по 30 товарів (його значення за замовчуванням) і «Load More» для них не працював би.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Перевірка: skip і Promise.all" data-chips="fetch, запуск" data-file="">
+        <p class="cond">
+          Те саме без axios, щоб запустити тут. Друга сторінка категорії smartphones і три товари паралельно.
+        </p>
+        <script type="text/plain" class="code" data-run>
+          const LIMIT = 12;
+          const page = 2;
+          const skip = (page - 1) * LIMIT;
+
+          const res = await fetch(`https://dummyjson.com/products/category/smartphones?limit=${LIMIT}&skip=${skip}`);
+          const { products, total } = await res.json();
+          console.log(`сторінка ${page}: skip=${skip}, отримано ${products.length} з ${total}`);
+          console.log('є ще сторінки?', page * LIMIT < total);
+
+          const ids = [1, 5, 10];
+          const items = await Promise.all(
+            ids.map(id => fetch(`https://dummyjson.com/products/${id}`).then(r => r.json()))
+          );
+          console.log(items.map(p => `${p.id}: ${p.title} — $${p.price}`));
+        </script>
+        <ul class="how">
+          <li>На другій сторінці приходить 4 товари з 16, тому «є ще сторінки?» — <code>false</code>: кнопка ховається.</li>
+          <li>Порядок у <code>Promise.all</code> завжди як у масиві <code>ids</code>, хоч би яка відповідь прийшла першою.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Сховище і DOM ===================== -->
+      <h2 class="part-title">Сховище, посилання, рендер</h2>
+
+      <article class="task" data-title="Робота з localStorage" data-chips="JSON, filter, includes" data-file="blended_products/src/js/storage.js">
+        <p class="cond">Читати, записувати й перемикати ID у списках <code>cart</code> і <code>wishlist</code>.</p>
+        <script type="text/plain" class="code">
+          import { STORAGE_KEYS } from './constants';
+
+          export function saveToLS(key, value) {
+            localStorage.setItem(key, JSON.stringify(value));
+          }
+
+          export function getFromLS(key, defaultValue) {
+            try {
+              const data = localStorage.getItem(key);
+              return data === null ? defaultValue : JSON.parse(data);
+            } catch {
+              // у сховищі зіпсований рядок (не JSON)
+              return defaultValue;
+            }
+          }
+
+          export function getCart() {
+            return getFromLS(STORAGE_KEYS.cart, []);
+          }
+
+          export function getWishlist() {
+            return getFromLS(STORAGE_KEYS.wishlist, []);
+          }
+
+          export function isInList(key, id) {
+            return getFromLS(key, []).includes(id);
+          }
+
+          // Додає ID, якщо його немає, або видаляє, якщо є. Повертає true, якщо ID тепер у списку
+          export function toggleInList(key, id) {
+            const ids = getFromLS(key, []);
+            const isAdded = !ids.includes(id);
+            const newIds = isAdded ? [...ids, id] : ids.filter(item => item !== id);
+
+            saveToLS(key, newIds);
+            return isAdded;
+          }
+
+          export function addToList(key, id) {
+            if (!isInList(key, id)) {
+              toggleInList(key, id);
+            }
+          }
+
+          export function clearList(key) {
+            saveToLS(key, []);
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>getFromLS(key, defaultValue)</code> завжди повертає щось придатне: порожній масив, якщо ключа ще
+            немає, або якщо там лежить не JSON. Решта коду не перевіряє <code>null</code>.
+          </li>
+          <li>
+            <code>toggleInList</code> закриває обидва пункти ТЗ «додати» і «видалити» однією функцією і повертає, що
+            сталося. Кнопка модалки після неї просто перечитує стан.
+          </li>
+          <li>
+            <code>[...ids, id]</code> і <code>filter</code> створюють новий масив, а не змінюють старий. Звичка, яка
+            знадобиться в React: там зміна масиву «на місці» не оновлює екран.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Посилання на елементи" data-chips="querySelector" data-file="blended_products/src/js/refs.js">
+        <p class="cond">Один об'єкт <code>refs</code> на всі три сторінки.</p>
+        <script type="text/plain" class="code">
+          // Елементи, яких немає на поточній сторінці, будуть null
+          export const refs = {
+            categoryList: document.querySelector('.categories'),
+            productList: document.querySelector('.products'),
+            notFoundDiv: document.querySelector('.not-found'),
+            loadMoreBtn: document.querySelector('.load-more-btn'),
+            loader: document.querySelector('.loader'),
+            scrollTopBtn: document.querySelector('.scroll-top-btn'),
+
+            form: document.querySelector('.search-form'),
+            clearSearchBtn: document.querySelector('.search-form__btn-clear'),
+            themeBtn: document.querySelector('.theme-toggle-btn'),
+            cartCount: document.querySelector('[data-cart-count]'),
+            wishlistCount: document.querySelector('[data-wishlist-count]'),
+
+            modal: document.querySelector('.modal'),
+            modalProduct: document.querySelector('.modal-product'),
+            modalCloseBtn: document.querySelector('.modal__close-btn'),
+            modalWishlistBtn: document.querySelector('.modal-product__btn--wishlist'),
+            modalCartBtn: document.querySelector('.modal-product__btn--cart'),
+
+            cartItemsCount: document.querySelector('[data-count]'),
+            cartTotalPrice: document.querySelector('[data-price]'),
+            buyBtn: document.querySelector('.cart-summary__btn'),
+          };
+        </script>
+        <ul class="how">
+          <li>
+            Сторінки різні, а <code>refs.js</code> один. На Wishlist немає <code>.categories</code>, тому
+            <code>refs.categoryList</code> там <code>null</code>. Це нормально, поки ми не звертаємось до нього на цій
+            сторінці.
+          </li>
+          <li>
+            Кошик рахує підсумки в <code>[data-count]</code> і <code>[data-price]</code>. Пошук за data-атрибутом не
+            ламається, коли дизайнер перейменує класи.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Рендер" data-chips="map, join, insertAdjacentHTML" data-file="blended_products/src/js/render-functions.js">
+        <p class="cond">Розмітка категорій, карток, товару в модалці й підсумків кошика за шаблонами з ТЗ.</p>
+        <script type="text/plain" class="code">
+          import { refs } from './refs';
+
+          export function renderCategories(categories) {
+            const markup = categories
+              .map(
+                category => `<li class="categories__item">
+             <button class="categories__btn" type="button">${category}</button>
+           </li>`
+              )
+              .join('');
+
+            refs.categoryList.innerHTML = markup;
+          }
+
+          export function renderProducts(products) {
+            const markup = products
+              .map(
+                ({
+                  id,
+                  title,
+                  category,
+                  price,
+                  brand,
+                  thumbnail,
+                }) => `<li class="products__item" data-id="${id}">
+              <img class="products__image" src="${thumbnail}" alt="${title}" loading="lazy" />
+              <p class="products__title">${title}</p>
+              <p class="products__brand"><span class="products__brand--bold">Brand: </span>${brand || 'no brand'}</p>
+              <p class="products__category">Category: ${category}</p>
+              <p class="products__price">Price: $${price}</p>
+           </li>`
+              )
+              .join('');
+
+            refs.productList.insertAdjacentHTML('beforeend', markup);
+          }
+
+          export function clearProducts() {
+            refs.productList.innerHTML = '';
+          }
+
+          export function renderModalProduct({
+            title,
+            description,
+            images,
+            thumbnail,
+            tags = [],
+            shippingInformation,
+            returnPolicy,
+            price,
+          }) {
+            const tagsMarkup = tags.map(tag => `<li>${tag}</li>`).join('');
+
+            refs.modalProduct.innerHTML = `<img class="modal-product__img" src="${images?.[0] || thumbnail}" alt="${title}" />
+          <div class="modal-product__content">
+            <p class="modal-product__title">${title}</p>
+            <ul class="modal-product__tags">${tagsMarkup}</ul>
+            <p class="modal-product__description">${description}</p>
+            <p class="modal-product__shipping-information">Shipping: ${shippingInformation}</p>
+            <p class="modal-product__return-policy">Return Policy: ${returnPolicy}</p>
+            <p class="modal-product__price">Price: $${price}</p>
+            <button class="modal-product__buy-btn" type="button">Buy</button>
+          </div>`;
+          }
+
+          export function renderCartSummary(products) {
+            const total = products.reduce((sum, { price }) => sum + price, 0);
+
+            refs.cartItemsCount.textContent = products.length;
+            refs.cartTotalPrice.textContent = `$${total.toFixed(2)}`;
+          }
+        </script>
+        <ul class="how">
+          <li>
+            Категорії малюються через <code>innerHTML =</code> (список один раз), товари — через
+            <code>insertAdjacentHTML('beforeend')</code>: «Load More» дописує нові картки до вже показаних.
+            Тому перед новим списком окремо викликаємо <code>clearProducts()</code>.
+          </li>
+          <li>
+            <code>data-id="${id}"</code> на <code>li</code> — місток між карткою й бекендом: клік читає ID і робить запит
+            №3.
+          </li>
+          <li>
+            <code>images?.[0] || thumbnail</code>: у модалці велике фото, а якщо масиву немає, маленьке. Значення за
+            замовчуванням <code>tags = []</code> рятує від <code>undefined.map</code>.
+          </li>
+          <li><code>toFixed(2)</code>: 9.99 + 19.99 у JS дає 29.979999999999997, а показати треба $29.98.</li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>
+              Було <code>Price: ${price}$</code> і <code>Category:${category}</code> без пробілу. У шаблоні ТЗ
+              <code>Price: $</code> перед числом.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Допоміжні функції" data-chips="classList.toggle, iziToast, тема" data-file="blended_products/src/js/helpers.js">
+        <p class="cond">Дрібні дії, які повторюються: активна кнопка, «нічого не знайдено», лоадер, лічильники, тема, скрол.</p>
+        <script type="text/plain" class="code">
+          import iziToast from 'izitoast';
+          import 'izitoast/dist/css/iziToast.min.css';
+
+          import { STORAGE_KEYS } from './constants';
+          import { refs } from './refs';
+          import { getCart, getFromLS, getWishlist, saveToLS } from './storage';
+
+          export function setActiveCategory(button) {
+            refs.categoryList
+              .querySelector('.categories__btn--active')
+              ?.classList.remove('categories__btn--active');
+
+            button?.classList.add('categories__btn--active');
+          }
+
+          export function toggleNotFound(isVisible) {
+            refs.notFoundDiv.classList.toggle('not-found--visible', isVisible);
+          }
+
+          export function toggleLoadMore(isVisible) {
+            refs.loadMoreBtn?.classList.toggle('is-hidden', !isVisible);
+          }
+
+          // Лічильник: кілька запитів одночасно (категорії + товари) не ховають лоадер один одному
+          let activeRequests = 0;
+
+          export function showLoader() {
+            activeRequests += 1;
+            refs.loader.classList.remove('is-hidden');
+          }
+
+          export function hideLoader() {
+            activeRequests = Math.max(0, activeRequests - 1);
+            if (activeRequests === 0) {
+              refs.loader.classList.add('is-hidden');
+            }
+          }
+
+          export function updateNavCounts() {
+            refs.cartCount.textContent = getCart().length;
+            refs.wishlistCount.textContent = getWishlist().length;
+          }
+
+          export function showError(error) {
+            console.error(error);
+            iziToast.error({
+              message: 'Something went wrong. Please try again later.',
+              position: 'topRight',
+            });
+          }
+
+          export function showMessage(message, type = 'info') {
+            iziToast[type]({ message, position: 'topRight' });
+          }
+
+          // Тема: data-theme на body вмикає темні CSS-змінні з base.css
+          export function applyTheme(theme) {
+            document.body.dataset.theme = theme;
+            refs.themeBtn.textContent = theme === 'dark' ? '☀️' : '🌙';
+          }
+
+          export function initTheme() {
+            applyTheme(getFromLS(STORAGE_KEYS.theme, 'light'));
+          }
+
+          export function toggleTheme() {
+            const theme = document.body.dataset.theme === 'dark' ? 'light' : 'dark';
+            applyTheme(theme);
+            saveToLS(STORAGE_KEYS.theme, theme);
+          }
+
+          export function toggleScrollTopBtn() {
+            refs.scrollTopBtn.classList.toggle(
+              'scroll-top-btn--visible',
+              window.scrollY > 400
+            );
+          }
+
+          export function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>classList.toggle(cls, condition)</code> замінює пару <code>if (…) add else remove</code>. Функції
+            приймають <code>true</code>/<code>false</code> і самі вирішують, що робити з класом.
+          </li>
+          <li>
+            Лоадер з лічильником: на Home одночасно йдуть запит категорій і запит товарів. Без лічильника перший, що
+            закінчився, сховав би лоадер, поки другий ще вантажиться.
+          </li>
+          <li>
+            iziToast і його CSS імпортуються тут один раз. Vite додає стилі на всі сторінки, де використано
+            <code>helpers.js</code>, тож <code>&lt;link&gt;</code> на CDN у <code>wishlist.html</code> більше не
+            потрібен.
+          </li>
+          <li>
+            Тема: <code>base.css</code> оголошує темні змінні для <code>[data-theme='dark']</code> всередині
+            <code>:root</code>, тобто для нащадків <code>html</code>. Тому атрибут ставимо на <code>body</code>, а не
+            на <code>html</code>.
+          </li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>
+              <code>classList.add('not found--visible')</code>: пробіл у назві класу. Браузер кидає
+              <code>InvalidCharacterError</code>, а правильна назва — <code>not-found--visible</code>.
+            </li>
+            <li>
+              <code>doActiveBtn</code> брала глобальний <code>event</code>, якого в модулі немає. До того ж вона
+              спочатку додавала клас першій кнопці, а потім одразу знімала його. Тепер
+              <code>setActiveCategory(button)</code> отримує кнопку параметром: з <code>getCategories</code> це
+              перша кнопка, з кліку — <code>event.target.closest(...)</code>.
+            </li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- ===================== Модалка ===================== -->
+      <h2 class="part-title">Модальне вікно</h2>
+
+      <article class="task" data-title="Відкриття і закриття" data-chips="keydown, currentTarget" data-file="blended_products/src/js/modal.js">
+        <p class="cond">
+          Клас <code>modal--is-open</code>, закриття кнопкою, бекдропом і Esc. Слухач клавіатури ставиться при
+          відкритті й знімається при закритті.
+        </p>
+        <script type="text/plain" class="code">
+          import { STORAGE_KEYS } from './constants';
+          import { refs } from './refs';
+          import { renderModalProduct } from './render-functions';
+          import { isInList } from './storage';
+
+          export function updateModalButtons(id) {
+            refs.modalWishlistBtn.textContent = isInList(STORAGE_KEYS.wishlist, id)
+              ? 'Remove from Wishlist'
+              : 'Add to Wishlist';
+
+            refs.modalCartBtn.textContent = isInList(STORAGE_KEYS.cart, id)
+              ? 'Remove from Cart'
+              : 'Add to Cart';
+          }
+
+          export function openModal(product) {
+            renderModalProduct(product);
+            // ID відкритого продукту читають кнопки Add/Remove
+            refs.modal.dataset.id = product.id;
+            updateModalButtons(product.id);
+
+            refs.modal.classList.add('modal--is-open');
+            document.body.style.overflow = 'hidden';
+            // слухач клавіатури живе тільки поки модалка відкрита
+            document.addEventListener('keydown', onEscPress);
+          }
+
+          export function closeModal() {
+            refs.modal.classList.remove('modal--is-open');
+            document.body.style.overflow = '';
+            document.removeEventListener('keydown', onEscPress);
+          }
+
+          export function getModalProductId() {
+            return Number(refs.modal.dataset.id);
+          }
+
+          function onEscPress(event) {
+            if (event.code === 'Escape') {
+              closeModal();
+            }
+          }
+
+          export function onBackdropClick(event) {
+            // клік саме по бекдропу, а не по вмісту модалки
+            if (event.target === event.currentTarget) {
+              closeModal();
+            }
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>removeEventListener</code> знімає слухача, тільки якщо отримав ту саму функцію. Тому
+            <code>onEscPress</code> — іменована функція, а не стрілка всередині <code>openModal</code>.
+          </li>
+          <li>
+            Бекдроп: слухач стоїть на <code>.modal</code>. Клік по вмісту спливає до нього, але тоді
+            <code>target</code> — якийсь дочірній елемент. Тільки клік по самому затемненню дає
+            <code>target === currentTarget</code>.
+          </li>
+          <li>
+            ID товару зберігається в <code>refs.modal.dataset.id</code>. Кнопки Add/Remove не знають, яку картку
+            клікнули, тож читають його звідти.
+          </li>
+          <li><code>body.style.overflow = 'hidden'</code> не дає сторінці прокручуватись під відкритою модалкою.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Хендлери ===================== -->
+      <h2 class="part-title">Хендлери</h2>
+
+      <article class="task" data-title="Стан і перша сторінка списку" data-chips="state, try/catch/finally" data-file="blended_products/src/js/handlers.js">
+        <p class="cond">
+          «Load More» має довантажувати той список, який зараз на екрані: усі товари, категорію або пошук. Для цього
+          хендлери тримають маленький об'єкт стану.
+        </p>
+        <script type="text/plain" class="code">
+          // Що зараз показано на Home: Load More має довантажувати той самий список
+          const state = {
+            page: 1,
+            category: ALL_CATEGORY,
+            query: '',
+          };
+
+          function requestProducts() {
+            const { page, category, query } = state;
+
+            if (query) {
+              return fetchBySearch(query, page);
+            }
+            if (category !== ALL_CATEGORY) {
+              return fetchByCategory(category, page);
+            }
+            return fetchProducts(page);
+          }
+
+          // Сторінка 2 з LIMIT=12 показує товари до 24-го: якщо total більший, є ще
+          function hasMorePages(total) {
+            return state.page * LIMIT < total;
+          }
+
+          // Перша сторінка поточного списку: очищаємо все й малюємо з нуля
+          async function showFirstPage() {
+            state.page = 1;
+            clearProducts();
+            toggleNotFound(false);
+            toggleLoadMore(false);
+            showLoader();
+
+            try {
+              const { products, total } = await requestProducts();
+
+              if (products.length === 0) {
+                toggleNotFound(true);
+                return;
+              }
+
+              renderProducts(products);
+              toggleLoadMore(hasMorePages(total));
+            } catch (error) {
+              showError(error);
+            } finally {
+              hideLoader();
+            }
+          }
+        </script>
+        <ul class="how">
+          <li>
+            Стан описує, що показати, а <code>requestProducts</code> вирішує, який запит для цього потрібен. Клік по
+            категорії, пошук і очищення пошуку тільки змінюють <code>state</code> і викликають
+            <code>showFirstPage</code>.
+          </li>
+          <li>
+            Порядок у <code>showFirstPage</code>: прибрати старе (картки, «не знайдено», кнопку), показати лоадер,
+            чекати відповідь, показати нове. <code>finally</code> ховає лоадер і після успіху, і після помилки.
+          </li>
+          <li>
+            <code>return</code> всередині <code>try</code> теж проходить через <code>finally</code>, тому порожній
+            результат не залишає лоадер висіти.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Категорії, пошук, Load More" data-chips="делегування, closest, preventDefault" data-file="blended_products/src/js/handlers.js">
+        <p class="cond">Пункти 1, 3 і 5 ТЗ і кнопка довантаження.</p>
+        <script type="text/plain" class="code">
+          export async function getCategories() {
+            showLoader();
+            try {
+              const categories = await fetchCategories();
+              renderCategories([ALL_CATEGORY, ...categories]);
+              setActiveCategory(refs.categoryList.querySelector('.categories__btn'));
+            } catch (error) {
+              showError(error);
+            } finally {
+              hideLoader();
+            }
+          }
+
+          export function getProducts(query = '') {
+            state.category = ALL_CATEGORY;
+            state.query = query;
+            return showFirstPage();
+          }
+
+          export function clickOnCategory(event) {
+            const button = event.target.closest('.categories__btn');
+            if (!button) {
+              return;
+            }
+
+            setActiveCategory(button);
+            refs.form.reset();
+
+            state.category = button.textContent.trim();
+            state.query = '';
+            showFirstPage();
+          }
+
+          export function searchByQuery(event) {
+            event.preventDefault();
+            const query = event.currentTarget.elements.searchValue.value.trim();
+
+            if (query === '') {
+              showMessage('Enter a word to search', 'warning');
+              return;
+            }
+
+            setActiveCategory(null);
+            state.category = ALL_CATEGORY;
+            state.query = query;
+            showFirstPage();
+          }
+
+          export function clearSearch() {
+            refs.form.reset();
+            setActiveCategory(refs.categoryList.querySelector('.categories__btn'));
+            getProducts();
+          }
+
+          export async function loadMore() {
+            state.page += 1;
+            refs.loadMoreBtn.classList.add('is-loading');
+
+            try {
+              const { products, total } = await requestProducts();
+              renderProducts(products);
+
+              if (!hasMorePages(total)) {
+                toggleLoadMore(false);
+                showMessage("You've reached the end of the product list");
+              }
+            } catch (error) {
+              state.page -= 1;
+              showError(error);
+            } finally {
+              refs.loadMoreBtn.classList.remove('is-loading');
+            }
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>closest('.categories__btn')</code> замість <code>nodeName === 'BUTTON'</code>: так перевірка не
+            зламається, якщо в кнопку колись додадуть іконку чи <code>&lt;span&gt;</code>.
+          </li>
+          <li>
+            <code>trim()</code> до перевірки: рядок з пробілів стає <code>''</code>, і запит не йде. Так вимагає ТЗ.
+          </li>
+          <li>
+            <code>event.currentTarget</code> — завжди сама форма, на якій висить слухач. <code>event.target</code> при
+            submit теж форма, але для інших подій це не так, тож <code>currentTarget</code> надійніший.
+          </li>
+          <li>
+            Якщо «Load More» впав з помилкою, <code>state.page -= 1</code> повертає номер сторінки назад, і наступний
+            клік спробує ту саму сторінку, а не пропустить її.
+          </li>
+          <li>
+            Повідомлення про кінець списку з'являється після «Load More». Коли в категорії лише 5 товарів, кнопка
+            просто не показується, без зайвого тосту.
+          </li>
+        </ul>
+        <div class="note">
+          <ul>
+            <li>
+              Головна помилка мого варіанту — дужки. Рядок <code>notFoundToggle(data.products)</code> і весь блок
+              <code>try { … }</code> пошуку опинились поза функціями. Код поза функцією виконується одразу при імпорті
+              модуля, де <code>data</code> і <code>querry</code> не існують → модуль падає, і не працює взагалі нічого.
+              Prettier при збереженні показує такі місця: блок «з'їжджає» на нульовий відступ.
+            </li>
+            <li>
+              У пошуку <code>return</code> стояв після <code>if</code>, а не всередині. Функція завершувалась завжди,
+              навіть із нормальним запитом.
+            </li>
+            <li><code>iziToast</code> використано без імпорту, а <code>searchByQuerry</code> не імпортовано в <code>home.js</code>.</li>
+            <li>Категорія «all» з малої, а в ТЗ «All». Тепер це одна константа <code>ALL_CATEGORY</code>.</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="task" data-title="Товар у модалці, Add/Remove" data-chips="колбек, location" data-file="blended_products/src/js/handlers.js">
+        <p class="cond">Пункт 4 ТЗ, кнопки Wishlist/Cart і пошук з інших сторінок.</p>
+        <script type="text/plain" class="code">
+          /* ---------- Wishlist / Cart: пошук з хедера веде на Home ---------- */
+
+          export function redirectToSearch(event) {
+            event.preventDefault();
+            const query = event.currentTarget.elements.searchValue.value.trim();
+
+            if (query === '') {
+              showMessage('Enter a word to search', 'warning');
+              return;
+            }
+
+            location.href = `./index.html?search=${encodeURIComponent(query)}`;
+          }
+
+          /* ---------- Модалка (на всіх сторінках) ---------- */
+
+          export async function clickOnProduct(event) {
+            const card = event.target.closest('.products__item');
+            if (!card) {
+              return;
+            }
+
+            showLoader();
+            try {
+              const product = await fetchProductById(card.dataset.id);
+              openModal(product);
+            } catch (error) {
+              showError(error);
+            } finally {
+              hideLoader();
+            }
+          }
+
+          // onChange — колбек сторінки: Wishlist і Cart перемальовують свій список
+          export function toggleModalProduct(key, onChange) {
+            const id = getModalProductId();
+            toggleInList(key, id);
+
+            updateModalButtons(id);
+            updateNavCounts();
+            onChange?.(key);
+          }
+
+          export function clickOnBuyInModal(event) {
+            if (!event.target.closest('.modal-product__buy-btn')) {
+              return;
+            }
+
+            addToList(STORAGE_KEYS.cart, getModalProductId());
+            closeModal();
+            location.href = './cart.html';
+          }
+        </script>
+        <ul class="how">
+          <li>
+            <code>toggleModalProduct</code> отримує ключ сховища, тому одна функція обслуговує обидві кнопки.
+          </li>
+          <li>
+            <code>onChange?.(key)</code> — колбек від сторінки. Home нічого не передає. Wishlist передає функцію, яка
+            перемальовує список, коли товар прибрали з wishlist. Хендлер нічого не знає про сторінки, а сторінка
+            сама вирішує, як реагувати.
+          </li>
+          <li>
+            Форма пошуку є в хедері кожної сторінки. На Wishlist і Cart вона переводить на Home з
+            <code>?search=…</code>, і Home одразу шукає це слово. <code>encodeURIComponent</code> кодує пробіли й
+            спецсимволи для URL.
+          </li>
+          <li>Кнопка «Buy» у модалці не описана в ТЗ. Тут вона кладе товар у кошик і відкриває Cart.</li>
+        </ul>
+      </article>
+
+      <!-- ===================== Сторінки ===================== -->
+      <h2 class="part-title">Сторінки</h2>
+
+      <article class="task" data-title="Спільне для всіх сторінок" data-chips="initPage, деструктуризація" data-file="blended_products/src/js/common.js">
+        <p class="cond">
+          Тема, лічильники, скрол, модалка й клік по картці потрібні на кожній сторінці. Замість трьох копій —
+          одна функція.
+        </p>
+        <script type="text/plain" class="code">
+          import { STORAGE_KEYS } from './constants';
+          import {
+            clickOnBuyInModal,
+            clickOnProduct,
+            toggleModalProduct,
+          } from './handlers';
+          import {
+            initTheme,
+            scrollToTop,
+            toggleScrollTopBtn,
+            toggleTheme,
+            updateNavCounts,
+          } from './helpers';
+          import { closeModal, onBackdropClick } from './modal';
+          import { refs } from './refs';
+
+          // Те, що однаково працює на всіх трьох сторінках
+          export function initPage({ onListChange } = {}) {
+            initTheme();
+            updateNavCounts();
+
+            refs.themeBtn.addEventListener('click', toggleTheme);
+
+            window.addEventListener('scroll', toggleScrollTopBtn);
+            refs.scrollTopBtn.addEventListener('click', scrollToTop);
+
+            refs.productList.addEventListener('click', clickOnProduct);
+
+            refs.modalCloseBtn.addEventListener('click', closeModal);
+            refs.modal.addEventListener('click', onBackdropClick);
+            refs.modalProduct.addEventListener('click', clickOnBuyInModal);
+            refs.modalWishlistBtn.addEventListener('click', () =>
+              toggleModalProduct(STORAGE_KEYS.wishlist, onListChange)
+            );
+            refs.modalCartBtn.addEventListener('click', () =>
+              toggleModalProduct(STORAGE_KEYS.cart, onListChange)
+            );
+          }
+        </script>
+        <ul class="how">
+          <li>
+            Цього файлу немає в списку ТЗ, але ТЗ дозволяє додавати файли. Без нього той самий десяток рядків
+            стояв би в <code>home.js</code>, <code>wishlist.js</code> і <code>cart.js</code>.
+          </li>
+          <li>
+            <code>{ onListChange } = {}</code>: параметр-об'єкт з деструктуризацією. <code>initPage()</code> без
+            аргументів теж працює, а нові налаштування потім додаються без зміни виклику на інших сторінках.
+          </li>
+          <li>
+            Клік по картці делегується на <code>ul.products</code> один раз, і він працює для карток, які ще навіть не
+            завантажені «Load More».
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Home" data-chips="URLSearchParams" data-file="blended_products/src/home.js">
+        <p class="cond">Точка входу головної сторінки.</p>
+        <script type="text/plain" class="code">
+          //Логіка сторінки Home
+          import { initPage } from './js/common';
+          import {
+            clearSearch,
+            clickOnCategory,
+            getCategories,
+            getProducts,
+            loadMore,
+            searchByQuery,
+          } from './js/handlers';
+          import { refs } from './js/refs';
+
+          initPage();
+
+          // ?search=... приходить з форми пошуку на Wishlist і Cart
+          const searchFromUrl = new URLSearchParams(location.search).get('search') || '';
+          refs.form.elements.searchValue.value = searchFromUrl;
+
+          getCategories();
+          getProducts(searchFromUrl);
+
+          refs.categoryList.addEventListener('click', clickOnCategory);
+          refs.form.addEventListener('submit', searchByQuery);
+          refs.clearSearchBtn.addEventListener('click', clearSearch);
+          refs.loadMoreBtn.addEventListener('click', loadMore);
+        </script>
+        <ul class="how">
+          <li>
+            <code>getCategories()</code> і <code>getProducts()</code> викликаються без <code>await</code> одна за
+            одною, тож обидва запити йдуть паралельно.
+          </li>
+          <li><code>URLSearchParams</code> читає <code>?search=laptop</code> з адреси. Немає параметра → <code>null</code> → <code>''</code>.</li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Wishlist" data-chips="Promise.all" data-file="blended_products/src/wishlist.js">
+        <p class="cond">Прочитати ID зі сховища, отримати товари через <code>Promise.all</code>, відрендерити.</p>
+        <script type="text/plain" class="code">
+          //Логіка сторінки Wishlist
+          import { initPage } from './js/common';
+          import { STORAGE_KEYS } from './js/constants';
+          import { redirectToSearch } from './js/handlers';
+          import {
+            hideLoader,
+            showError,
+            showLoader,
+            toggleNotFound,
+          } from './js/helpers';
+          import { fetchProductsByIds } from './js/products-api';
+          import { refs } from './js/refs';
+          import { clearProducts, renderProducts } from './js/render-functions';
+          import { getWishlist } from './js/storage';
+
+          async function renderWishlist() {
+            const ids = getWishlist();
+
+            clearProducts();
+            toggleNotFound(ids.length === 0);
+            if (ids.length === 0) {
+              return;
+            }
+
+            showLoader();
+            try {
+              const products = await fetchProductsByIds(ids);
+              renderProducts(products);
+            } catch (error) {
+              showError(error);
+            } finally {
+              hideLoader();
+            }
+          }
+
+          initPage({
+            // перемальовуємо тільки коли змінився саме wishlist
+            onListChange: key => key === STORAGE_KEYS.wishlist && renderWishlist(),
+          });
+
+          renderWishlist();
+
+          refs.form.addEventListener('submit', redirectToSearch);
+          refs.clearSearchBtn.addEventListener('click', () => refs.form.reset());
+        </script>
+        <ul class="how">
+          <li>Порожній wishlist — без запиту: показуємо блок «Your Wishlist Is Empty» (текст змінено в HTML сторінки).</li>
+          <li>
+            <code>key =&gt; key === STORAGE_KEYS.wishlist &amp;&amp; renderWishlist()</code>: додали товар у кошик —
+            список не перемальовується; прибрали з wishlist — картка зникає одразу, навіть з відкритою модалкою.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Cart" data-chips="reduce, iziToast" data-file="blended_products/src/cart.js">
+        <p class="cond">Те саме для кошика, плюс Items, Total і кнопка Buy Products.</p>
+        <script type="text/plain" class="code">
+          //Логіка сторінки Cart
+          import { initPage } from './js/common';
+          import { STORAGE_KEYS } from './js/constants';
+          import { redirectToSearch } from './js/handlers';
+          import {
+            hideLoader,
+            showError,
+            showLoader,
+            showMessage,
+            toggleNotFound,
+            updateNavCounts,
+          } from './js/helpers';
+          import { fetchProductsByIds } from './js/products-api';
+          import { refs } from './js/refs';
+          import {
+            clearProducts,
+            renderCartSummary,
+            renderProducts,
+          } from './js/render-functions';
+          import { clearList, getCart } from './js/storage';
+
+          async function renderCart() {
+            const ids = getCart();
+
+            clearProducts();
+            renderCartSummary([]);
+            toggleNotFound(ids.length === 0);
+            if (ids.length === 0) {
+              return;
+            }
+
+            showLoader();
+            try {
+              const products = await fetchProductsByIds(ids);
+              renderProducts(products);
+              renderCartSummary(products);
+            } catch (error) {
+              showError(error);
+            } finally {
+              hideLoader();
+            }
+          }
+
+          function buyProducts() {
+            if (getCart().length === 0) {
+              showMessage('Your cart is empty', 'warning');
+              return;
+            }
+
+            showMessage('Thank you! Your order has been placed.', 'success');
+            clearList(STORAGE_KEYS.cart);
+            updateNavCounts();
+            renderCart();
+          }
+
+          initPage({
+            onListChange: key => key === STORAGE_KEYS.cart && renderCart(),
+          });
+
+          renderCart();
+
+          refs.form.addEventListener('submit', redirectToSearch);
+          refs.clearSearchBtn.addEventListener('click', () => refs.form.reset());
+          refs.buyBtn.addEventListener('click', buyProducts);
+        </script>
+        <ul class="how">
+          <li>
+            <code>renderCartSummary([])</code> на початку обнуляє підсумки, тож після покупки там $0.00, а не старі
+            цифри.
+          </li>
+          <li>
+            Після покупки кошик очищається. ТЗ вимагає тільки повідомлення, але кошик, що лишився повним після
+            оплати, виглядав би як помилка.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Додатково ===================== -->
+      <h2 class="part-title">Додатковий функціонал і збірка</h2>
+
+      <article class="task" data-title="Лоадер, scrollUp, тема" data-chips="partials, CSS" data-file="blended_products/src/">
+        <p class="cond">Три пункти «Додатковий функціонал» з ТЗ.</p>
+        <script type="text/plain" class="code">
+          <!-- partials/loader.html, підключено в усі три сторінки -->
+          <load src="./partials/loader.html" />
+          <div class="loader is-hidden" aria-label="Loading"></div>
+
+          /* css/loader.css (імпортовано в styles.css) */
+          .loader { position: fixed; top: 50%; left: 50%; … animation: spin 0.8s linear infinite; }
+          .loader.is-hidden { display: none; }
+        </script>
+        <ul class="how">
+          <li>
+            Лоадер — окремий partial, як хедер і модалка: розмітка в одному файлі, а
+            <code>vite-plugin-html-inject</code> вставляє її на кожну сторінку.
+          </li>
+          <li>
+            scrollUp: <code>scroll</code> на <code>window</code> додає <code>scroll-top-btn--visible</code> після 400px,
+            клік робить <code>scrollTo({ top: 0, behavior: 'smooth' })</code>.
+          </li>
+          <li>
+            Тема зберігається під ключем <code>theme</code> і відновлюється в <code>initPage</code> на кожній сторінці.
+            Кнопка показує ☀️/🌙. Кнопка теми стояла <code>position: absolute</code> поверх лічильника Wishlist, тепер
+            вона звичайний елемент flex-хедера. Для темної теми додано кольори підсумків кошика.
+          </li>
+        </ul>
+      </article>
+
+      <article class="task" data-title="Як проєкт потрапляє на сайт" data-chips="Vite, --base, Vercel" data-file="vercel.json">
+        <p class="cond">Магазин викладається разом з конспектами одним Vercel-проєктом.</p>
+        <script type="text/plain" class="code">
+          "installCommand": "(cd lesson-5-vite && npm ci) && (cd blended_products && npm ci)",
+          "buildCommand": "… && cd ../blended_products && npx vite build --base=/blended_products/ --outDir ../../_site/blended_products"
+        </script>
+        <ul class="how">
+          <li>
+            <code>--base=/blended_products/</code>: зібрані сторінки лежать не в корені сайту, а в папці. Без цього
+            прапора браузер шукав би <code>/assets/…</code> і отримав 404 (порожня сторінка).
+          </li>
+          <li>
+            <code>--outDir ../../_site/…</code> рахується від <code>root: 'src'</code> у <code>vite.config.js</code>,
+            тому два рівні вгору.
+          </li>
+          <li>
+            <code>blended_products/index.html</code> — заглушка для Live Server з підказкою запустити
+            <code>npm run dev</code>. На Vercel її замінює зібрана сторінка.
+          </li>
+        </ul>
+      </article>
+
+      <!-- ===================== Поради ===================== -->
+      <h2 class="part-title">Поради для інших проєктів</h2>
+
+      <article class="task" data-no="★" data-title="Що забрати з цього проєкту" data-chips="патерни" data-file="">
+        <ul class="how">
+          <li>
+            <b>Розкладка за ролями</b> (api / render / storage / handlers / refs / constants) підходить для будь-якого
+            застосунку на чистому JS. Коли шукаєш баг, одразу знаєш файл: не той запит — <code>products-api</code>, не
+            та розмітка — <code>render-functions</code>.
+          </li>
+          <li>
+            <b>Функції запитів повертають дані, а не малюють.</b> Тоді їх можна перевикористати на іншій сторінці або
+            перенести в React без змін.
+          </li>
+          <li>
+            <b>Шаблон async-хендлера</b>: <code>showLoader → try { await; render } catch { показати помилку } finally {
+            hideLoader }</code>. Користувач завжди бачить або результат, або повідомлення, і ніколи — вічний лоадер.
+          </li>
+          <li>
+            <b>Стан в одному об'єкті</b> (<code>page</code>, <code>category</code>, <code>query</code>). Коли
+            додаватимеш сортування чи фільтр ціни, це ще одне поле в <code>state</code> і рядок у
+            <code>requestProducts</code>.
+          </li>
+          <li>
+            <b>У сховищі — ID, дані — з сервера.</b> Так само працюють «обране», «переглянуті товари», «закладки».
+          </li>
+          <li>
+            <b>Колбек замість перевірки сторінки.</b> Не <code>if (location.pathname === '/wishlist.html')</code>
+            всередині хендлера, а <code>initPage({ onListChange })</code>: спільний код не знає про конкретні сторінки.
+          </li>
+          <li>
+            <b>Слухачі, які треба знімати</b> (Esc у модалці, <code>scroll</code> для нескінченного скролу) — завжди
+            іменовані функції.
+          </li>
+          <li>
+            <b>Захист від «гонки» запитів.</b> Якщо швидко клікнути дві категорії, повільніша відповідь може прийти
+            останньою й перемалювати список не тією категорією. У великих проєктах для цього передають
+            <code>AbortController</code> (<code>axios.get(url, { signal })</code>) і скасовують попередній запит.
+          </li>
+          <li>
+            <b>Prettier + форматування при збереженні.</b> Більшість помилок цього заняття — зайві чи пропущені дужки.
+            Форматер одразу показує, де код вийшов з функції.
+          </li>
+        </ul>
+        <div class="note" data-label="Можна покращити">
+          <ul>
+            <li>
+              Wishlist і Cart після кожної зміни заново запитують усі товари. Для 5–10 товарів це непомітно; для
+              великого кошика краще тримати отриманий масив і просто прибирати з нього елемент.
+            </li>
+            <li>
+              Кошик рахує кожен ID один раз. Справжньому магазину потрібна кількість:
+              <code>[{ id: 1, qty: 2 }]</code> замість <code>[1]</code>.
+            </li>
+            <li>
+              Дані з бекенду вставляються через <code>innerHTML</code>. dummyjson — тестовий API, але з чужими даними
+              текст варто екранувати або створювати елементи через <code>textContent</code>.
+            </li>
+          </ul>
+        </div>
+      </article>
+    </main>
+  </body>
+</html>
